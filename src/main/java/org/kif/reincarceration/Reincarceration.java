@@ -35,9 +35,12 @@ public class Reincarceration extends JavaPlugin {
             moduleManager.registerModule(new EconomyModule(this), CoreModule.class, DataModule.class);
             moduleManager.registerModule(new RankModule(this), CoreModule.class, DataModule.class, EconomyModule.class);
             moduleManager.registerModule(new ModifierModule(this), CoreModule.class, DataModule.class);
-            moduleManager.registerModule(new CycleModule(this), CoreModule.class, DataModule.class, EconomyModule.class, RankModule.class, ModifierModule.class);
-            moduleManager.registerModule(new GUIModule(this), CoreModule.class, DataModule.class, EconomyModule.class, RankModule.class, ModifierModule.class, CycleModule.class);
-            moduleManager.registerModule(new CommandModule(this), CoreModule.class, CycleModule.class, DataModule.class, EconomyModule.class, RankModule.class, ModifierModule.class, GUIModule.class);
+            moduleManager.registerModule(new CycleModule(this), CoreModule.class, DataModule.class, EconomyModule.class,
+                    RankModule.class, ModifierModule.class);
+            moduleManager.registerModule(new GUIModule(this), CoreModule.class, DataModule.class, EconomyModule.class,
+                    RankModule.class, ModifierModule.class, CycleModule.class);
+            moduleManager.registerModule(new CommandModule(this), CoreModule.class, CycleModule.class, DataModule.class,
+                    EconomyModule.class, RankModule.class, ModifierModule.class, GUIModule.class);
 
             // Enable core module
             moduleManager.enableModule(CoreModule.class);
@@ -72,8 +75,6 @@ public class Reincarceration extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PreTransactionListener(this), this);
             getServer().getPluginManager().registerEvents(new PostTransactionListener(this), this);
 
-
-
             // -*- Reincarceration Anti-Cheat Listeners -*-
             // Flagging: items dropped by associated players breaking blocks
             getServer().getPluginManager().registerEvents(new BlockBreakListener(this), this);
@@ -96,8 +97,11 @@ public class Reincarceration extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
 
             getServer().getPluginManager().registerEvents(new ItemPickupListener(this), this);
-//            getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
-//            getServer().getPluginManager().registerEvents(new InventoryDragListener(this), this);
+            //            getServer().getPluginManager().registerEvents(new InventoryClickListener(this), this);
+            //            getServer().getPluginManager().registerEvents(new InventoryDragListener(this), this);
+
+            // /rankup listener
+            getServer().getPluginManager().registerEvents(new RankupListener(this), this);
 
             ConsoleUtil.sendSuccess("Reincarceration has been enabled!");
         } catch (SQLException e) {
@@ -121,7 +125,8 @@ public class Reincarceration extends JavaPlugin {
             moduleManager.disableAllModules();
         }
         if (prefix != null) {
-            console.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + "&2Reincarceration has been disabled!"));
+            console.sendMessage(
+                    ChatColor.translateAlternateColorCodes('&', prefix + "&2Reincarceration has been disabled!"));
         } else {
             console.sendMessage(ChatColor.RED + "[Reincarceration] has been disabled!");
         }
