@@ -174,8 +174,6 @@
             <groupId>moe.krp</groupId>
             <artifactId>SimpleRegions</artifactId>
             <version>1.3.10</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/dependencies/sr.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
