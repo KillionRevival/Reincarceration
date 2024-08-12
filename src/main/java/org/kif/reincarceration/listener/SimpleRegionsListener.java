@@ -2,6 +2,7 @@ package org.kif.reincarceration.listener;
 
 import moe.krp.simpleregions.events.DeductUpkeepEvent;
 import moe.krp.simpleregions.events.PreUpkeepCostCheckEvent;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.kif.reincarceration.Reincarceration;
@@ -23,7 +24,12 @@ public class SimpleRegionsListener implements Listener {
     }
 
     @EventHandler
-    public void onCheckUpkeepCost(PreUpkeepCostCheckEvent event) {
+    public void onCheckUpkeepCost(PreUpkeepCostCheckEvent event) throws SQLException {
+        final OfflinePlayer owner = event.getPlayer();
+        if (!dataManager.isPlayerInCycle(owner.getUniqueId())) {
+            return;
+        }
+
         final BigDecimal cost = event.getCost();
         BigDecimal balance;
         try {
@@ -41,7 +47,12 @@ public class SimpleRegionsListener implements Listener {
     }
 
     @EventHandler
-    public void onDeductUpkeep(DeductUpkeepEvent event) {
+    public void onDeductUpkeep(DeductUpkeepEvent event) throws SQLException {
+        final OfflinePlayer owner = event.getPlayer();
+        if (!dataManager.isPlayerInCycle(owner.getUniqueId())) {
+            return;
+        }
+
         final BigDecimal cost = event.getUpkeepCost();
         BigDecimal balance;
         try {
