@@ -21,6 +21,7 @@ jobs:
         uses: KillionRevival/maven-builder-action@v1
         with:
           token: ${{ secrets.PAT }}
+          java-version: 21
 
       - name: Upload Release Asset
         id: release
@@ -31,3 +32,5 @@ jobs:
       - name: Publish Package
         id: publish
         uses: KillionRevival/maven-deploy-action@v1
+        with:
+          java-version: 21
