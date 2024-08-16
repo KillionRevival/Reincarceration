@@ -62,7 +62,8 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
     @Override
     public void apply(Player player) {
         super.apply(player);
-        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> checkAndApplyFire(player), 0L, checkInterval);
+        BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> checkAndApplyFire(player), 0L,
+                checkInterval);
         activeTasks.put(player.getUniqueId(), task);
         ConsoleUtil.sendDebug("ImmolationModifier applied to " + player.getName());
         ConsoleUtil.sendDebug("ImmolationModifier Active on " + player.getName() + "? " + isActive(player));
@@ -93,11 +94,13 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
             ConsoleUtil.sendDebug("Removed fire resistance from " + player.getName());
         }
 
-        ConsoleUtil.sendDebug("Checking fire for " + player.getName() + ". Current fire ticks: " + player.getFireTicks());
+        ConsoleUtil
+                .sendDebug("Checking fire for " + player.getName() + ". Current fire ticks: " + player.getFireTicks());
 
         if (player.getFireTicks() > 0) {
             player.setFireTicks(fireDuration);
-            ConsoleUtil.sendDebug("Reapplied fire to " + player.getName() + ". New fire ticks: " + player.getFireTicks());
+            ConsoleUtil
+                    .sendDebug("Reapplied fire to " + player.getName() + ". New fire ticks: " + player.getFireTicks());
             if (spreadFireEnabled) {
                 spreadFireToNearbyPlayers(player);
             }
@@ -111,9 +114,10 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
         ConsoleUtil.sendDebug("Attempting to spread fire from " + sourcePlayer.getName());
         for (Player nearbyPlayer : sourcePlayer.getWorld().getPlayers()) {
             if (nearbyPlayer != sourcePlayer && !isActive(nearbyPlayer) &&
-                nearbyPlayer.getLocation().distance(sourcePlayer.getLocation()) <= spreadRadius) {
+                    nearbyPlayer.getLocation().distance(sourcePlayer.getLocation()) <= spreadRadius) {
                 nearbyPlayer.setFireTicks(spreadFireDuration);
-                ConsoleUtil.sendDebug("Spread fire to " + nearbyPlayer.getName() + ". Fire ticks: " + nearbyPlayer.getFireTicks());
+                ConsoleUtil.sendDebug(
+                        "Spread fire to " + nearbyPlayer.getName() + ". Fire ticks: " + nearbyPlayer.getFireTicks());
             }
         }
     }
@@ -122,10 +126,12 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
     public void onEntityCombust(EntityCombustEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            ConsoleUtil.sendDebug("ImmolationModifier Active on onEntityCombust " + player.getName() + "? " + isActive(player));
+            ConsoleUtil.sendDebug(
+                    "ImmolationModifier Active on onEntityCombust " + player.getName() + "? " + isActive(player));
             if (isActive(player)) {
                 event.setDuration(fireDuration);
-                ConsoleUtil.sendDebug("EntityCombustEvent: Set fire duration for " + player.getName() + " to " + fireDuration);
+                ConsoleUtil.sendDebug(
+                        "EntityCombustEvent: Set fire duration for " + player.getName() + " to " + fireDuration);
             }
         }
     }
@@ -144,7 +150,6 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
         }
     }
 
-
     private void equipFireResistantBoots(Player player) {
         ConfigurationSection config = plugin.getConfig().getConfigurationSection("modifiers.immolation.boots");
         ConsoleUtil.sendDebug("ImmolationModifier Active on " + player.getName() + "? " + isActive(player));
@@ -155,7 +160,7 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
         ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
         ItemMeta meta = boots.getItemMeta();
         if (meta != null) {
-            meta.addEnchant(Enchantment.PROTECTION_FIRE, fireProtectionLevel, true);
+            meta.addEnchant(Enchantment.FIRE_PROTECTION, fireProtectionLevel, true);
 
             // Set custom durability
             if (meta instanceof Damageable) {
@@ -174,6 +179,7 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
         ItemUtil.addReincarcerationFlag(boots);
 
         player.getInventory().setBoots(boots);
-        ConsoleUtil.sendDebug("Equipped " + player.getName() + " with flagged fire-resistant boots (" + durability + " durability, " + repairCost + " repair cost)");
+        ConsoleUtil.sendDebug("Equipped " + player.getName() + " with flagged fire-resistant boots (" + durability
+                + " durability, " + repairCost + " repair cost)");
     }
 }

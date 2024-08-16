@@ -32,7 +32,8 @@ public class GamblerModifier extends AbstractModifier implements Listener {
     @Override
     public void apply(Player player) {
         super.apply(player);
-        player.sendMessage(ChatColor.DARK_RED + "You've activated the Gambler modifier. May the odds be ever in your favor!");
+        player.sendMessage(
+                ChatColor.DARK_RED + "You've activated the Gambler modifier. May the odds be ever in your favor!");
         ConsoleUtil.sendDebug("Applied Gambler Modifier to " + player.getName());
     }
 
@@ -50,7 +51,8 @@ public class GamblerModifier extends AbstractModifier implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        if (!isActive(player)) return;
+        if (!isActive(player))
+            return;
 
         // 50% chance the block won't break
         if (random.nextDouble() < 0.5) {
@@ -78,8 +80,10 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) return;
-        if (!isActive(player)) return;
+        if (!(event.getEntity() instanceof Player player))
+            return;
+        if (!isActive(player))
+            return;
 
         EntityDamageEvent.DamageCause cause = event.getCause();
 
@@ -113,7 +117,7 @@ public class GamblerModifier extends AbstractModifier implements Listener {
             event.setCancelled(true);
             player.sendMessage(ChatColor.GREEN + "You narrowly avoided the damage!");
         } else if (effect < 0.7) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 2));
             player.sendMessage(ChatColor.GRAY + "The hit slowed you down!");
         }
 
@@ -128,7 +132,8 @@ public class GamblerModifier extends AbstractModifier implements Listener {
     }
 
     private void spawnRandomMob(Player player, Location location) {
-        EntityType[] mobs = {EntityType.ZOMBIE, EntityType.SKELETON, EntityType.SPIDER, EntityType.CAVE_SPIDER, EntityType.WITCH};
+        EntityType[] mobs = { EntityType.ZOMBIE, EntityType.SKELETON, EntityType.SPIDER, EntityType.CAVE_SPIDER,
+                EntityType.WITCH };
         EntityType mobType = mobs[random.nextInt(mobs.length)];
         Entity entity = location.getWorld().spawnEntity(location, mobType);
 
@@ -168,7 +173,7 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     private void applyRandomPotionEffects(LivingEntity entity) {
         PotionEffectType[] effects = {
-                PotionEffectType.SPEED, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.DAMAGE_RESISTANCE,
+                PotionEffectType.SPEED, PotionEffectType.STRENGTH, PotionEffectType.RESISTANCE,
                 PotionEffectType.REGENERATION, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.INVISIBILITY
         };
 
@@ -183,8 +188,8 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     private void applyRandomNegativeEffect(Player player) {
         PotionEffectType[] negativeEffects = {
-                PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.SLOW,
-                PotionEffectType.CONFUSION, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER
+                PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.SLOWNESS,
+                PotionEffectType.NAUSEA, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER
         };
 
         PotionEffectType effect = negativeEffects[random.nextInt(negativeEffects.length)];
@@ -195,7 +200,7 @@ public class GamblerModifier extends AbstractModifier implements Listener {
     }
 
     private void dropExtraLoot(Location location) {
-        Material[] loots = {Material.DIAMOND, Material.GOLD_INGOT, Material.IRON_INGOT, Material.EMERALD};
+        Material[] loots = { Material.DIAMOND, Material.GOLD_INGOT, Material.IRON_INGOT, Material.EMERALD };
         Material lootType = loots[random.nextInt(loots.length)];
         location.getWorld().dropItemNaturally(location, new ItemStack(lootType, 1 + random.nextInt(3)));
     }

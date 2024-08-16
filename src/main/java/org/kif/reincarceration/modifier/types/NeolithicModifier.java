@@ -67,11 +67,11 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         if (task != null) {
             task.cancel();
         }
-        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+        player.removePotionEffect(PotionEffectType.HASTE);
     }
 
     private void applyHasteEffect(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 20 * 40, 0, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 40, 0, false, false));
     }
 
     @Override
@@ -83,7 +83,8 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         if (!allowedTools.contains(itemInHand.getType()) && isTool(itemInHand.getType())) {
             event.setCancelled(true);
             MessageUtil.sendPrefixMessage(player, "&cYou can only use basic tools!");
-            ConsoleUtil.sendDebug(player.getName() + " attempted to use " + itemInHand.getType() + " but was prevented by Neolithic Modifier");
+            ConsoleUtil.sendDebug(player.getName() + " attempted to use " + itemInHand.getType()
+                    + " but was prevented by Neolithic Modifier");
             return true;
         }
 
@@ -108,7 +109,8 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         if (!allowedTools.contains(itemInHand.getType()) && isTool(itemInHand.getType())) {
             event.setCancelled(true);
             MessageUtil.sendPrefixMessage(player, "&cYou can only deal damage with basic tools!");
-            ConsoleUtil.sendDebug(player.getName() + " attempted to deal damage with " + itemInHand.getType() + " but was prevented by Neolithic Modifier");
+            ConsoleUtil.sendDebug(player.getName() + " attempted to deal damage with " + itemInHand.getType()
+                    + " but was prevented by Neolithic Modifier");
         }
     }
 
@@ -140,7 +142,8 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
                 breakConnectedBlocks(block, block.getType(), event.getPlayer());
                 return true; // We've handled this special case
             } else {
-                ConsoleUtil.sendDebug("Block break was cancelled. Not handling connected blocks for " + block.getType());
+                ConsoleUtil
+                        .sendDebug("Block break was cancelled. Not handling connected blocks for " + block.getType());
             }
         }
         return false; // Not a special case
@@ -162,7 +165,8 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
             block.setType(Material.AIR);
         }
 
-        ConsoleUtil.sendDebug("Broke and dropped " + connectedBlocks.size() + " connected " + material.name() + " blocks");
+        ConsoleUtil
+                .sendDebug("Broke and dropped " + connectedBlocks.size() + " connected " + material.name() + " blocks");
     }
 
     private void dropFlaggedItem(org.bukkit.Location location, Material material, Player player) {

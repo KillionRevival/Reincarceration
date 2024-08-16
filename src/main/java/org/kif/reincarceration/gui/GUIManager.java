@@ -43,9 +43,10 @@ public class GUIManager {
     private final Map<String, Material> modifierMaterials = new HashMap<>();
     private static final int ITEMS_PER_PAGE = 45;
 
-    public GUIManager(final Reincarceration plugin, GUIModule guiModule, ConfigManager configManager, CycleManager cycleManager,
-                      DataManager dataManager, EconomyManager economyManager, RankManager rankManager,
-                      PermissionManager permissionManager, ModifierManager modifierManager) {
+    public GUIManager(final Reincarceration plugin, GUIModule guiModule, ConfigManager configManager,
+            CycleManager cycleManager,
+            DataManager dataManager, EconomyManager economyManager, RankManager rankManager,
+            PermissionManager permissionManager, ModifierManager modifierManager) {
         this.plugin = plugin;
         this.guiModule = guiModule;
         this.configManager = configManager;
@@ -75,7 +76,8 @@ public class GUIManager {
         Inventory inventory = Bukkit.createInventory(null, 36, ChatColor.DARK_PURPLE + "Reincarceration Menu");
 
         // Always show Player Info
-        inventory.setItem(11, createEnchantedGuiItem(Material.BOOK, ChatColor.BLUE + "Player Info", "View your current status"));
+        inventory.setItem(11,
+                createEnchantedGuiItem(Material.BOOK, ChatColor.BLUE + "Player Info", "View your current status"));
 
         try {
             boolean inCycle = cycleManager.isPlayerInCycle(player);
@@ -83,39 +85,53 @@ public class GUIManager {
             boolean isMaxRank = configManager.isMaxRank(currentRank);
 
             if (!inCycle && player.hasPermission("reincarceration.startcycle")) {
-                inventory.setItem(21, createGuiItem(Material.IRON_BARS, ChatColor.GREEN + "Start Cycle", "Begin a new cycle ($" + configManager.getEntryFee() + ")", "All Cycles reward a plaque with the cycle name, date, and time it took you to complete it!"));
+                inventory.setItem(21, createGuiItem(Material.IRON_BARS, ChatColor.GREEN + "Start Cycle",
+                        "Begin a new cycle ($" + configManager.getEntryFee() + ")",
+                        "All Cycles reward a plaque with the cycle name, date, and time it took you to complete it!"));
             } else {
-                inventory.setItem(21, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Start Cycle", "You can't start a new cycle now"));
+                inventory.setItem(21, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Start Cycle",
+                        "You can't start a new cycle now"));
             }
 
             if (inCycle && !isMaxRank && player.hasPermission("reincarceration.rankup")) {
-                inventory.setItem(23, createGuiItem(Material.EMERALD, ChatColor.GREEN + "Rank Up", "Advance to the next rank ($" + configManager.getRankUpCost(rankManager.getPlayerRank(player)) + ")"));
+                inventory.setItem(23,
+                        createGuiItem(Material.EMERALD, ChatColor.GREEN + "Rank Up", "Advance to the next rank ($"
+                                + configManager.getRankUpCost(rankManager.getPlayerRank(player)) + ")"));
             } else {
-                inventory.setItem(23, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Rank Up", "You can't rank up now"));
+                inventory.setItem(23,
+                        createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Rank Up", "You can't rank up now"));
             }
 
             if (player.hasPermission("reincarceration.listmodifiers")) {
-                inventory.setItem(15, createGuiItem(Material.CARTOGRAPHY_TABLE, ChatColor.LIGHT_PURPLE + "Modifier List", "View modifier information"));
+                inventory.setItem(15, createGuiItem(Material.CARTOGRAPHY_TABLE,
+                        ChatColor.LIGHT_PURPLE + "Modifier List", "View modifier information"));
             } else {
-                inventory.setItem(15, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Modifier List", "You don't have permission"));
+                inventory.setItem(15, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Modifier List",
+                        "You don't have permission"));
             }
 
             if (player.hasPermission("reincarceration.viewonlineplayers")) {
-                inventory.setItem(13, createGuiItem(Material.PLAYER_HEAD, ChatColor.BLUE + "Online Players", "View info of online players"));
+                inventory.setItem(13, createGuiItem(Material.PLAYER_HEAD, ChatColor.BLUE + "Online Players",
+                        "View info of online players"));
             } else {
-                inventory.setItem(13, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Online Players", "You don't have permission"));
+                inventory.setItem(13, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Online Players",
+                        "You don't have permission"));
             }
 
             if (inCycle && isMaxRank && player.hasPermission("reincarceration.completecycle")) {
-                inventory.setItem(25, createGuiItem(Material.END_CRYSTAL, ChatColor.RED + "Complete Cycle", "Complete your current cycle"));
+                inventory.setItem(25, createGuiItem(Material.END_CRYSTAL, ChatColor.RED + "Complete Cycle",
+                        "Complete your current cycle"));
             } else {
-                inventory.setItem(25, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Complete Cycle", "You can't complete a cycle now"));
+                inventory.setItem(25, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Complete Cycle",
+                        "You can't complete a cycle now"));
             }
 
             if (cycleManager.isPlayerInCycle(player)) {
-                inventory.setItem(19, createGuiItem(Material.LEAD, ChatColor.RED + "Quit Cycle", "End your current cycle"));
+                inventory.setItem(19,
+                        createGuiItem(Material.LEAD, ChatColor.RED + "Quit Cycle", "End your current cycle"));
             } else {
-                inventory.setItem(19, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Quit Cycle", "You can't end a cycle now"));
+                inventory.setItem(19, createDisabledGuiItem(Material.BARRIER, ChatColor.GRAY + "Quit Cycle",
+                        "You can't end a cycle now"));
             }
 
             // Add player status summary
@@ -134,7 +150,8 @@ public class GUIManager {
                     ConsoleUtil.sendDebug("Player " + player.getName() + " is in cycle but has no active modifier.");
                 }
             }
-            ItemStack statusSummary = createGuiItem(Material.PAPER, ChatColor.GOLD + "Your Status", statusLore.toArray(new String[0]));
+            ItemStack statusSummary = createGuiItem(Material.PAPER, ChatColor.GOLD + "Your Status",
+                    statusLore.toArray(new String[0]));
 
             inventory.setItem(31, statusSummary);
 
@@ -155,7 +172,8 @@ public class GUIManager {
     }
 
     public void openStartCycleGUI(Player player, int page) {
-        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.AQUA + "Start Cycle (Page " + (page + 1) + ")");
+        Inventory inventory = Bukkit.createInventory(null, 54,
+                ChatColor.AQUA + "Start Cycle (Page " + (page + 1) + ")");
 
         try {
             List<IModifier> availableModifiers = modifierManager.getAvailableModifiers(player);
@@ -163,10 +181,12 @@ public class GUIManager {
 
             // Add Random Challenge option
             ItemStack randomItem = createGuiItem(Material.RABBIT_FOOT, ChatColor.GOLD + "Random Challenge",
-                    ChatColor.YELLOW + "Click to start a cycle with a random modifier!" + configManager.getRandomModifierDiscount() + "%");
+                    ChatColor.YELLOW + "Click to start a cycle with a random modifier!"
+                            + configManager.getRandomModifierDiscount() + "%");
             inventory.setItem(45, randomItem);
 
-            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE, availableModifiers.size()); i++) {
+            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE,
+                    availableModifiers.size()); i++) {
                 IModifier modifier = availableModifiers.get(i);
                 inventory.addItem(createModifierItem(modifier, ChatColor.AQUA + "Available", true));
             }
@@ -209,11 +229,14 @@ public class GUIManager {
         ItemStack warningSign = createGuiItem(Material.BARRIER, ChatColor.RED + "Warning!",
                 ChatColor.YELLOW + "Starting a cycle will kill you!",
                 ChatColor.YELLOW + "Ensure your items are stored!.",
-                ChatColor.YELLOW + "Selected Modifier: " + (selectedModifier.getId().equals("random") ? "Random Challenge" : selectedModifier.getName()),
+                ChatColor.YELLOW + "Selected Modifier: "
+                        + (selectedModifier.getId().equals("random") ? "Random Challenge" : selectedModifier.getName()),
                 "");
 
         ItemStack confirmItem = createGuiItem(Material.EMERALD_BLOCK, ChatColor.GREEN + "Confirm Start Cycle",
-                ChatColor.YELLOW + "Click to start the cycle" + (selectedModifier.getId().equals("random") ? " with a random modifier" : " with " + selectedModifier.getName()));
+                ChatColor.YELLOW + "Click to start the cycle"
+                        + (selectedModifier.getId().equals("random") ? " with a random modifier"
+                                : " with " + selectedModifier.getName()));
 
         ItemStack cancelItem = createGuiItem(Material.REDSTONE_BLOCK, ChatColor.RED + "Cancel",
                 ChatColor.YELLOW + "Click to return to the main menu");
@@ -237,8 +260,7 @@ public class GUIManager {
 
             if (inCycle) {
                 inventory.setItem(11, createGuiItem(Material.DIAMOND_SWORD, ChatColor.AQUA + "Current Rank",
-                        "Rank: " + configManager.getRankName(currentRank)
-                ));
+                        "Rank: " + configManager.getRankName(currentRank)));
 
                 inventory.setItem(13, createGuiItem(Material.GOLD_INGOT, ChatColor.YELLOW + "Economy",
                         "Balance: " + balance,
@@ -271,14 +293,14 @@ public class GUIManager {
         BigDecimal rankUpCost = configManager.getRankUpCost(currentRank);
 
         inventory.setItem(11, createGuiItem(Material.DIAMOND_SWORD, ChatColor.AQUA + "Current Rank",
-                "Rank: " + configManager.getRankName(currentRank)
-        ));
+                "Rank: " + configManager.getRankName(currentRank)));
 
         inventory.setItem(13, createGuiItem(Material.GOLD_INGOT, ChatColor.YELLOW + "Economy",
                 "Current Balance: " + balance,
                 "Cost to Rank Up: " + rankUpCost));
 
-        Material rankUpMaterial = (balance.compareTo(rankUpCost) >= 0) ? Material.EMERALD_BLOCK : Material.REDSTONE_BLOCK;
+        Material rankUpMaterial = (balance.compareTo(rankUpCost) >= 0) ? Material.EMERALD_BLOCK
+                : Material.REDSTONE_BLOCK;
         String rankUpStatus = (balance.compareTo(rankUpCost) >= 0) ? "Click to Rank Up!" : "Insufficient Funds";
         inventory.setItem(15, createGuiItem(rankUpMaterial, ChatColor.GREEN + "Rank Up", rankUpStatus));
 
@@ -288,7 +310,8 @@ public class GUIManager {
     }
 
     public void openAvailableModifiersGUI(Player player, int page) {
-        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.AQUA + "Available Modifiers (Page " + (page + 1) + ")");
+        Inventory inventory = Bukkit.createInventory(null, 54,
+                ChatColor.AQUA + "Available Modifiers (Page " + (page + 1) + ")");
 
         try {
             List<IModifier> availableModifiers = modifierManager.getAvailableModifiers(player);
@@ -301,7 +324,8 @@ public class GUIManager {
 
             int totalPages = (availableModifiers.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
 
-            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE, availableModifiers.size()); i++) {
+            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE,
+                    availableModifiers.size()); i++) {
                 IModifier modifier = availableModifiers.get(i);
                 inventory.addItem(createModifierItem(modifier, ChatColor.AQUA + "Available", true));
             }
@@ -313,7 +337,8 @@ public class GUIManager {
                 inventory.setItem(53, createModifierItem(activeModifier, ChatColor.GREEN + "Active Modifier", false));
             }
 
-            inventory.setItem(45, createGuiItem(Material.BOOK, ChatColor.GOLD + "Completed Modifiers", "View completed modifiers"));
+            inventory.setItem(45,
+                    createGuiItem(Material.BOOK, ChatColor.GOLD + "Completed Modifiers", "View completed modifiers"));
 
         } catch (SQLException e) {
             player.sendMessage(ChatColor.RED + "Error retrieving modifier data.");
@@ -323,9 +348,9 @@ public class GUIManager {
         player.openInventory(inventory);
     }
 
-
     public void openCompletedModifiersGUI(Player player, int page) {
-        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.GOLD + "Completed Modifiers (Page " + (page + 1) + ")");
+        Inventory inventory = Bukkit.createInventory(null, 54,
+                ChatColor.GOLD + "Completed Modifiers (Page " + (page + 1) + ")");
 
         try {
             List<String> completedModifierIds = dataManager.getCompletedModifiers(player);
@@ -339,7 +364,8 @@ public class GUIManager {
 
             int totalPages = (completedModifiers.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
 
-            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE, completedModifiers.size()); i++) {
+            for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE,
+                    completedModifiers.size()); i++) {
                 IModifier modifier = completedModifiers.get(i);
                 inventory.addItem(createModifierItem(modifier, ChatColor.GOLD + "Completed", false));
             }
@@ -352,7 +378,8 @@ public class GUIManager {
                 inventory.setItem(53, createModifierItem(activeModifier, ChatColor.GREEN + "Active Modifier", false));
             }
 
-            inventory.setItem(45, createGuiItem(Material.CARTOGRAPHY_TABLE, ChatColor.AQUA + "Available Modifiers", "View available modifiers"));
+            inventory.setItem(45, createGuiItem(Material.CARTOGRAPHY_TABLE, ChatColor.AQUA + "Available Modifiers",
+                    "View available modifiers"));
 
         } catch (SQLException e) {
             player.sendMessage(ChatColor.RED + "Error retrieving modifier data.");
@@ -368,7 +395,8 @@ public class GUIManager {
                 .collect(Collectors.toList());
         int totalPages = (onlinePlayers.size() + ITEMS_PER_PAGE - 1) / ITEMS_PER_PAGE;
 
-        Inventory inventory = Bukkit.createInventory(null, 54, ChatColor.BLUE + "Online Players (Page " + (page + 1) + ")");
+        Inventory inventory = Bukkit.createInventory(null, 54,
+                ChatColor.BLUE + "Online Players (Page " + (page + 1) + ")");
 
         for (int i = page * ITEMS_PER_PAGE; i < Math.min((page + 1) * ITEMS_PER_PAGE, onlinePlayers.size()); i++) {
             Player onlinePlayer = onlinePlayers.get(i);
@@ -386,7 +414,8 @@ public class GUIManager {
 
         boolean inCycle = cycleManager.isPlayerInCycle(player);
         int currentRank = rankManager.getPlayerRank(player);
-        boolean canComplete = inCycle && configManager.isMaxRank(currentRank) && economyManager.hasEnoughBalance(player, configManager.getRankUpCost(currentRank));
+        boolean canComplete = inCycle && configManager.isMaxRank(currentRank)
+                && economyManager.hasEnoughBalance(player, configManager.getRankUpCost(currentRank));
 
         inventory.setItem(11, createGuiItem(Material.BOOK, ChatColor.YELLOW + "Current Status",
                 "In Cycle: " + (inCycle ? "Yes" : "No"),
@@ -430,7 +459,7 @@ public class GUIManager {
 
     private ItemStack createEnchantedGuiItem(Material material, String name, String... lore) {
         ItemStack item = createGuiItem(material, name, lore);
-        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        item.addUnsafeEnchantment(Enchantment.LUCK_OF_THE_SEA, 1);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
@@ -489,7 +518,6 @@ public class GUIManager {
         return item;
     }
 
-
     private ItemStack createPlayerSkull(Player player) {
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD, 1);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
@@ -505,7 +533,7 @@ public class GUIManager {
             boolean inCycle = cycleManager.isPlayerInCycle(player);
             IModifier activeModifier = modifierManager.getActiveModifier(player);
 
-            if(inCycle) {
+            if (inCycle) {
                 lore.add(ChatColor.GOLD + "Rank: " + configManager.getRankName(currentRank));
             }
             lore.add(ChatColor.AQUA + "Cycle Count: " + cycleCount);

@@ -75,55 +75,49 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                 return new PotionOreEffect(
                         PotionEffectType.getByName(Objects.requireNonNull(config.getString("effect"))),
                         config.getInt("duration", effectDuration),
-                        config.getInt("amplifier", 0)
-                );
-//            case "teleport":
-//                return new TeleportOreEffect(
-//                        config.getInt("min_distance", 3),
-//                        config.getInt("max_distance", 10),
-//                        config.getStringList("allowed_blocks")
-//                );
+                        config.getInt("amplifier", 0));
+            //            case "teleport":
+            //                return new TeleportOreEffect(
+            //                        config.getInt("min_distance", 3),
+            //                        config.getInt("max_distance", 10),
+            //                        config.getStringList("allowed_blocks")
+            //                );
             case "magnet":
                 return new MagnetOreEffect(
                         config.getDouble("radius", 5),
                         config.getBoolean("attract", true),
-                        config.getInt("duration", 100)
-                );
+                        config.getInt("duration", 100));
             case "block_transform":
                 return new BlockTransformOreEffect(
                         Material.valueOf(config.getString("from_material")),
                         Material.valueOf(config.getString("to_material")),
-                        config.getInt("radius", 3)
-                );
+                        config.getInt("radius", 3));
             case "inventory_shuffle":
                 return new InventoryShuffleOreEffect();
             case "bouncy_blocks":
                 return new BouncyBlocksOreEffect(
                         config.getInt("radius", 5),
-                        config.getInt("duration", 200)
-                );
-//            case "vertigo":
-//                return new VertigoOreEffect(
-//                        config.getInt("duration", 100),
-//                        (float) config.getDouble("max_rotation_per_tick", 15.0)
-//                );
+                        config.getInt("duration", 200));
+            //            case "vertigo":
+            //                return new VertigoOreEffect(
+            //                        config.getInt("duration", 100),
+            //                        (float) config.getDouble("max_rotation_per_tick", 15.0)
+            //                );
             case "inventory_weight":
                 return new InventoryWeightOreEffect(
-                        config.getInt("duration", 200)
-                );
+                        config.getInt("duration", 200));
             case "hunger":
                 return new HungerOreEffect(config.getInt("amount", 2));
-//            case "item_drop":
-//                return new ItemDropOreEffect(
-//                        Material.valueOf(config.getString("item")),
-//                        config.getInt("amount", 1)
-//                );
+            //            case "item_drop":
+            //                return new ItemDropOreEffect(
+            //                        Material.valueOf(config.getString("item")),
+            //                        config.getInt("amount", 1)
+            //                );
             case "sound":
                 return new SoundOreEffect(
                         Sound.valueOf(config.getString("sound")),
                         (float) config.getDouble("volume", 1.0),
-                        (float) config.getDouble("pitch", 1.0)
-                );
+                        (float) config.getDouble("pitch", 1.0));
             case "sinking":
                 return new SinkingEffect(config);
             case "collapse":
@@ -168,10 +162,12 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!effectOnBreak) return;
+        if (!effectOnBreak)
+            return;
 
         Player player = event.getPlayer();
-        if (!isActive(player)) return;
+        if (!isActive(player))
+            return;
 
         Block block = event.getBlock();
         OreEffect effect = oreEffects.get(block.getType());
@@ -190,10 +186,9 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         }
 
         return new Vector(
-            -Math.sin(yaw) * Math.cos(pitch),
-            -Math.sin(pitch),
-            Math.cos(yaw) * Math.cos(pitch)
-        );
+                -Math.sin(yaw) * Math.cos(pitch),
+                -Math.sin(pitch),
+                Math.cos(yaw) * Math.cos(pitch));
     }
 
     private Vector[] calculateVisionCone(Vector viewDirection) {
@@ -202,12 +197,16 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         Vector realUp = right.getCrossProduct(viewDirection).normalize();
 
         double tanFov = Math.tan(fieldOfView / 2);
-        Vector topLeft = viewDirection.clone().add(realUp.clone().multiply(tanFov)).subtract(right.clone().multiply(tanFov));
-        Vector topRight = viewDirection.clone().add(realUp.clone().multiply(tanFov)).add(right.clone().multiply(tanFov));
-        Vector bottomLeft = viewDirection.clone().subtract(realUp.clone().multiply(tanFov)).subtract(right.clone().multiply(tanFov));
-        Vector bottomRight = viewDirection.clone().subtract(realUp.clone().multiply(tanFov)).add(right.clone().multiply(tanFov));
+        Vector topLeft = viewDirection.clone().add(realUp.clone().multiply(tanFov))
+                .subtract(right.clone().multiply(tanFov));
+        Vector topRight = viewDirection.clone().add(realUp.clone().multiply(tanFov))
+                .add(right.clone().multiply(tanFov));
+        Vector bottomLeft = viewDirection.clone().subtract(realUp.clone().multiply(tanFov))
+                .subtract(right.clone().multiply(tanFov));
+        Vector bottomRight = viewDirection.clone().subtract(realUp.clone().multiply(tanFov))
+                .add(right.clone().multiply(tanFov));
 
-        return new Vector[]{topLeft, topRight, bottomLeft, bottomRight};
+        return new Vector[] { topLeft, topRight, bottomLeft, bottomRight };
     }
 
     private List<Block> findOreBlocksInRange(Player player) {
@@ -226,7 +225,8 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         return oreBlocks;
     }
 
-    private boolean isInVisionCone(Player player, Block block, Vector viewDirection, Vector topLeft, Vector topRight, Vector bottomLeft, Vector bottomRight) {
+    private boolean isInVisionCone(Player player, Block block, Vector viewDirection, Vector topLeft, Vector topRight,
+            Vector bottomLeft, Vector bottomRight) {
         Vector playerEyeLocation = player.getEyeLocation().toVector();
         Vector toBlock = block.getLocation().add(0.5, 0.5, 0.5).toVector().subtract(playerEyeLocation);
 
@@ -236,14 +236,14 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
             return toBlock.normalize().dot(viewDirection) > Math.cos(Math.toRadians(70)); // 70 degrees cone
         }
 
-        if (toBlock.dot(viewDirection) <= 0) return false;
+        if (toBlock.dot(viewDirection) <= 0)
+            return false;
 
         return isOnPositiveSide(toBlock, viewDirection, topLeft) &&
                 isOnPositiveSide(toBlock, viewDirection, topRight) &&
                 isOnPositiveSide(toBlock, bottomLeft, viewDirection) &&
                 isOnPositiveSide(toBlock, bottomRight, viewDirection);
     }
-
 
     private boolean isOnPositiveSide(Vector point, Vector planeNormal, Vector planePoint) {
         return point.subtract(planePoint).dot(planeNormal) >= 0;
@@ -261,17 +261,18 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
 
         Vector direction = blockLoc.toVector().subtract(eyeLoc.toVector()).normalize();
 
-    for (double d = 0; d < distance; d += lineOfSightStep) {
+        for (double d = 0; d < distance; d += lineOfSightStep) {
             Location checkLoc = eyeLoc.clone().add(direction.clone().multiply(d));
             Block checkBlock = checkLoc.getBlock();
 
-            if (checkBlock.equals(block)) return true;
-        if (checkBlock.getType().isOccluding() && !checkBlock.equals(block)) return false;
+            if (checkBlock.equals(block))
+                return true;
+            if (checkBlock.getType().isOccluding() && !checkBlock.equals(block))
+                return false;
         }
 
         return true;
     }
-
 
     private void checkPlayerSight(Player player) {
         Vector viewDirection = calculateViewDirection(player);
@@ -281,7 +282,8 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         ConsoleUtil.sendDebug("Checking sight for " + player.getName() + ". Ores in range: " + oreBlocks.size());
 
         for (Block block : oreBlocks) {
-            boolean inCone = isInVisionCone(player, block, viewDirection, visionCone[0], visionCone[1], visionCone[2], visionCone[3]);
+            boolean inCone = isInVisionCone(player, block, viewDirection, visionCone[0], visionCone[1], visionCone[2],
+                    visionCone[3]);
             ConsoleUtil.sendDebug("Ore at " + block.getLocation() + " in vision cone: " + inCone);
 
             if (inCone) {
@@ -292,7 +294,8 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                     OreEffect effect = oreEffects.get(block.getType());
                     if (effect != null) {
                         effect.apply(player);
-                        ConsoleUtil.sendDebug("Applied effect for ore type: " + block.getType() + " to player: " + player.getName());
+                        ConsoleUtil.sendDebug(
+                                "Applied effect for ore type: " + block.getType() + " to player: " + player.getName());
                     } else {
                         ConsoleUtil.sendDebug("No effect found for ore type: " + block.getType());
                     }
@@ -412,7 +415,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
             Map<Integer, ItemStack> slotsToIgnore = new HashMap<>();
 
             // Indices of armor slots and off hand slot
-            int[] armorSlots = {36, 37, 38, 39};
+            int[] armorSlots = { 36, 37, 38, 39 };
             int offHandSlot = 40;
 
             // Separate items to shuffle and items to ignore
@@ -445,7 +448,6 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         }
     }
 
-
     private static class MagnetOreEffect implements OreEffect {
         private final double radius;
         private final boolean attract;
@@ -461,6 +463,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
@@ -469,9 +472,9 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                     }
                     for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
                         if (entity instanceof Item || entity instanceof FallingBlock) {
-                            Vector direction = attract ?
-                                    player.getLocation().toVector().subtract(entity.getLocation().toVector()) :
-                                    entity.getLocation().toVector().subtract(player.getLocation().toVector());
+                            Vector direction = attract
+                                    ? player.getLocation().toVector().subtract(entity.getLocation().toVector())
+                                    : entity.getLocation().toVector().subtract(player.getLocation().toVector());
                             entity.setVelocity(direction.normalize().multiply(0.5));
                         }
                     }
@@ -494,6 +497,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
@@ -506,7 +510,8 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                             for (int z = -radius; z <= radius; z++) {
                                 Block block = playerLoc.getBlock().getRelative(x, y, z);
                                 if (block.getType().isSolid()) {
-                                    player.getWorld().spawnParticle(Particle.SLIME, block.getLocation().add(0.5, 1, 0.5), 1);
+                                    player.getWorld().spawnParticle(Particle.ITEM_SLIME,
+                                            block.getLocation().add(0.5, 1, 0.5), 1);
                                 }
                             }
                         }
@@ -515,7 +520,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                 }
             }.runTaskTimer(Reincarceration.getPlugin(Reincarceration.class), 0L, 1L);
 
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration, 3));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, 3));
         }
     }
 
@@ -533,6 +538,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
@@ -561,24 +567,24 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
-                        player.removePotionEffect(PotionEffectType.SLOW);
+                        player.removePotionEffect(PotionEffectType.SLOWNESS);
                         this.cancel();
                         return;
                     }
                     int filledSlots = (int) Arrays.stream(player.getInventory().getContents())
                             .filter(item -> item != null && item.getType() != Material.AIR)
                             .count();
-                    int slowness = filledSlots / 9;  // 1 level of slowness for every 9 filled slots
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, slowness, true));
+                    int slowness = filledSlots / 9; // 1 level of slowness for every 9 filled slots
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, slowness, true));
                     ticks += 20;
                 }
             }.runTaskTimer(Reincarceration.getPlugin(Reincarceration.class), 0L, 20L);
         }
     }
-
 
     private static class HungerOreEffect implements OreEffect {
         private final int amount;
@@ -643,6 +649,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
@@ -670,7 +677,6 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
             }.runTaskTimer(plugin, 0L, 1L);
         }
     }
-
 
     public static class CollapseEffect implements OreEffect {
         private final Set<Material> allowedBlocks;
@@ -747,6 +753,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
         public void apply(Player player) {
             new BukkitRunnable() {
                 int ticks = 0;
+
                 @Override
                 public void run() {
                     if (ticks >= duration) {
@@ -755,7 +762,8 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                     }
                     for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
                         if (entity instanceof Item) {
-                            Vector direction = entity.getLocation().toVector().subtract(player.getLocation().toVector());
+                            Vector direction = entity.getLocation().toVector()
+                                    .subtract(player.getLocation().toVector());
                             entity.setVelocity(direction.normalize().multiply(force));
                         }
                     }
@@ -840,10 +848,12 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                             " to " + targetBlock.getLocation() +
                             ". Replaced " + targetType + " with " + oreType);
                 } else {
-                    ConsoleUtil.sendDebug("Avoidance effect: No valid adjacent blocks found for ore at " + oreBlock.getLocation());
+                    ConsoleUtil.sendDebug(
+                            "Avoidance effect: No valid adjacent blocks found for ore at " + oreBlock.getLocation());
                 }
             } else {
-                ConsoleUtil.sendDebug("Avoidance effect: No adjacent air block found for ore at " + oreBlock.getLocation());
+                ConsoleUtil.sendDebug(
+                        "Avoidance effect: No adjacent air block found for ore at " + oreBlock.getLocation());
             }
         }
     }
