@@ -7,6 +7,7 @@ import net.luckperms.api.node.Node;
 import net.luckperms.api.node.NodeType;
 import net.luckperms.api.node.types.InheritanceNode;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.config.ConfigManager;
 import org.kif.reincarceration.data.DataManager;
@@ -16,7 +17,6 @@ import com.flyerzrule.mc.customtags.api.CustomTagsAPI;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -25,7 +25,7 @@ public class PermissionManager {
     private final ConfigManager configManager;
     private final LuckPerms luckPerms;
     private final DataManager dataManager;
-    private final CustomTagsAPI customTagsAPI;
+    private CustomTagsAPI customTagsAPI;
 
     public PermissionManager(Reincarceration plugin) {
         this.plugin = plugin;
@@ -33,9 +33,14 @@ public class PermissionManager {
         this.luckPerms = plugin.getServer().getServicesManager().load(LuckPerms.class);
         DataModule dataModule = plugin.getModuleManager().getModule(DataModule.class);
         this.dataManager = dataModule.getDataManager();
-        this.customTagsAPI = Objects
-                .requireNonNull(plugin.getServer().getServicesManager().getRegistration(CustomTagsAPI.class))
-                .getProvider();
+
+        try {
+            this.customTagsAPI = plugin.getServer()
+                    .getServicesManager().getRegistration(CustomTagsAPI.class).getProvider();
+        } catch (Exception e) {
+            this.customTagsAPI = null;
+            ConsoleUtil.sendError("Failed to load CustomTagsAPI: " + e.getMessage());
+        }
     }
 
     public void updatePlayerRankGroup(Player player, int rank) {
@@ -157,6 +162,12 @@ public class PermissionManager {
     }
 
     public void addCompletionPrefix(Player player) {
+        if (customTagsAPI == null) {
+            ConsoleUtil.sendError(
+                    "CustomTagsAPI is not available. Completion prefixes cannot be added. Use /rcreloadtags to reload tags for player: "
+                            + player.getDisplayName());
+            return;
+        }
         try {
             int cycleCount = dataManager.getPlayerCycleCount(player);
             List<String> completedModifiers = dataManager.getCompletedModifiers(player);
@@ -180,7 +191,8 @@ public class PermissionManager {
                 if (customTagsAPI.giveUserTag(player, reincarnationTagId)) {
                     ConsoleUtil.sendDebug("Added reincarnation tag " + reincarnationTagId + " for " + player.getName());
                 } else {
-                    ConsoleUtil.sendError("Failed to add reincarnation tag " + reincarnationTagId + " for " + player.getName());
+                    ConsoleUtil.sendError(
+                            "Failed to add reincarnation tag " + reincarnationTagId + " for " + player.getName());
                 }
             }
 
@@ -200,7 +212,8 @@ public class PermissionManager {
                 if (customTagsAPI.setUserSelectedTag(player, selectedTagId)) {
                     ConsoleUtil.sendDebug("Set " + selectedTagId + " as selected tag for " + player.getName());
                 } else {
-                    ConsoleUtil.sendError("Failed to set " + selectedTagId + " as selected tag for " + player.getName());
+                    ConsoleUtil
+                            .sendError("Failed to set " + selectedTagId + " as selected tag for " + player.getName());
                 }
             }
 
@@ -221,10 +234,8 @@ public class PermissionManager {
 
         // Remove all existing completion permissions
         Pattern completionPattern = Pattern.compile("reincarceration\\.completions\\.\\d+");
-        user.data().clear(node ->
-                node.getKey().startsWith("reincarceration.completions.") &&
-                        completionPattern.matcher(node.getKey()).matches()
-        );
+        user.data().clear(node -> node.getKey().startsWith("reincarceration.completions.") &&
+                completionPattern.matcher(node.getKey()).matches());
 
         // Add the new completion permission
         String newPermission = "reincarceration.completions." + cycleCount;
@@ -318,8 +329,8 @@ public class PermissionManager {
         luckPerms.getUserManager().saveUser(user);
 
         ConsoleUtil.sendDebug("Updated completion groups for " + player.getName() +
-                              ". Cycle count: " + cycleCount +
-                              ", Completed modifiers: " + String.join(", ", completedModifiers));
+                ". Cycle count: " + cycleCount +
+                ", Completed modifiers: " + String.join(", ", completedModifiers));
     }
 
     public void removeFromCompletionGroups(Player player) {
