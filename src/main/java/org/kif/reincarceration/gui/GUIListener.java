@@ -60,7 +60,8 @@ public class GUIListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player)) return;
+        if (!(event.getWhoClicked() instanceof Player))
+            return;
         Player player = (Player) event.getWhoClicked();
         String title = event.getView().getTitle();
 
@@ -86,7 +87,8 @@ public class GUIListener implements Listener {
             }
         }
 
-        if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem() == null)
+            return;
 
         if (title.startsWith(ChatColor.DARK_PURPLE + "Reincarceration Menu")) {
             handleMainMenu(player, event);
@@ -153,7 +155,8 @@ public class GUIListener implements Listener {
     }
 
     private void handleStartCycleMenu(Player player, InventoryClickEvent event) {
-        if (handleNavigationButtons(player, event, event.getView().getTitle())) return;
+        if (handleNavigationButtons(player, event, event.getView().getTitle()))
+            return;
 
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem != null && clickedItem.getType() != Material.AIR) {
@@ -161,8 +164,7 @@ public class GUIListener implements Listener {
                 // Random Challenge selected
                 IModifier randomModifier = createRandomModifier();
                 guiManager.openStartCycleWarningGUI(player, randomModifier);
-            }
-            else if (event.isRightClick()) {
+            } else if (event.isRightClick()) {
                 String modifierName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
                 try {
                     IModifier modifier = modifierManager.getModifierByName(modifierName);
@@ -172,8 +174,7 @@ public class GUIListener implements Listener {
                 } catch (Exception e) {
                     player.sendMessage(ChatColor.RED + "Error selecting modifier: " + e.getMessage());
                 }
-            }
-            else {
+            } else {
                 String modifierName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
                 try {
                     IModifier modifier = modifierManager.getModifierByName(modifierName);
@@ -189,14 +190,17 @@ public class GUIListener implements Listener {
 
     private void handleRewardsMenu(Player player, InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null) return;
-        if (clickedItem.getType() != Material.REDSTONE_BLOCK) return;
+        if (clickedItem == null)
+            return;
+        if (clickedItem.getType() != Material.REDSTONE_BLOCK)
+            return;
         guiManager.openMainMenu(player);
     }
 
     private void handleStartCycleWarningMenu(Player player, InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null) return;
+        if (clickedItem == null)
+            return;
 
         if (clickedItem.getType() == Material.EMERALD_BLOCK) {
             // Confirm start cycle
@@ -236,7 +240,7 @@ public class GUIListener implements Listener {
                     rankManager.rankUp(player);
                     player.closeInventory();
                     player.sendMessage(ChatColor.GREEN + "You've successfully ranked up!");
-                    guiManager.openRankUpGUI(player);  // Reopen the GUI to show updated info
+                    guiManager.openRankUpGUI(player); // Reopen the GUI to show updated info
                 } else {
                     player.sendMessage(ChatColor.RED + "You can't rank up right now.");
                 }
@@ -271,7 +275,8 @@ public class GUIListener implements Listener {
             guiManager.openMainMenu(player);
         } else if (event.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
             try {
-                if (cycleManager.isPlayerInCycle(player) && configManager.isMaxRank(rankManager.getPlayerRank(player))) {
+                if (cycleManager.isPlayerInCycle(player)
+                        && configManager.isMaxRank(rankManager.getPlayerRank(player))) {
                     cycleManager.completeCycle(player);
                     player.closeInventory();
                     player.sendMessage(ChatColor.GREEN + "You've successfully completed your cycle!");
@@ -281,17 +286,18 @@ public class GUIListener implements Listener {
                 }
             } catch (Exception e) {
                 player.sendMessage(ChatColor.RED + "Error completing cycle: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
     private void handleAvailableModifiersMenu(Player player, InventoryClickEvent event) {
-        if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem() == null)
+            return;
 
         if (event.getCurrentItem().getType() == Material.BOOK) {
             guiManager.openCompletedModifiersGUI(player, 0);
-        }
-        else if (event.isRightClick()) {
+        } else if (event.isRightClick()) {
             String modifierName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
             try {
                 IModifier modifier = modifierManager.getModifierByName(modifierName);
@@ -301,8 +307,7 @@ public class GUIListener implements Listener {
             } catch (Exception e) {
                 player.sendMessage(ChatColor.RED + "Error selecting modifier: " + e.getMessage());
             }
-        }
-        else {
+        } else {
             handleNavigationButtons(player, event, event.getView().getTitle());
         }
     }
@@ -326,7 +331,8 @@ public class GUIListener implements Listener {
             if (event.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Next Page")) {
                 openNextPage(player, guiName, currentPage);
                 return true;
-            } else if (event.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Previous Page")) {
+            } else if (event.getCurrentItem().getItemMeta().getDisplayName()
+                    .equals(ChatColor.GREEN + "Previous Page")) {
                 openPreviousPage(player, guiName, currentPage);
                 return true;
             }
@@ -361,19 +367,37 @@ public class GUIListener implements Listener {
     private IModifier createRandomModifier() {
         return new IModifier() {
             @Override
-            public String getId() { return "random"; }
+            public String getId() {
+                return "random";
+            }
+
             @Override
-            public String getName() { return "Random Challenge"; }
+            public String getName() {
+                return "Random Challenge";
+            }
+
             @Override
-            public String getDescription() { return "A randomly selected challenge"; }
+            public String getDescription() {
+                return "A randomly selected challenge";
+            }
+
             @Override
-            public List<ItemStack> getItemRewards() { return new ArrayList<>(); }
+            public List<ItemStack> getItemRewards() {
+                return new ArrayList<>();
+            }
+
             @Override
-            public void apply(Player player) {} // Empty implementation
+            public void apply(Player player) {
+            } // Empty implementation
+
             @Override
-            public void remove(Player player) {} // Empty implementation
+            public void remove(Player player) {
+            } // Empty implementation
+
             @Override
-            public boolean isActive(Player player) { return false; } // Always return false for the placeholder
+            public boolean isActive(Player player) {
+                return false;
+            } // Always return false for the placeholder
 
             @Override
             public boolean isSecret() {
