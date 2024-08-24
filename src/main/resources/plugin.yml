@@ -8,12 +8,12 @@ depend:
     LuckPerms,
     PlayerVaults,
     EconomyShopGUI,
-    CustomTags,
     WorldGuard,
     ChestShop,
     KillionCommons,
     SimpleRegions
   ]
+softdepend: [CustomTags]
 description: A reoffender system plugin with challenges and ranks.
 
 commands:
