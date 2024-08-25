@@ -64,7 +64,7 @@
                         </goals>
                         <configuration>
                             <target>
-                                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="C:/Users/Thoma/Coding/paper_server/plugins"/>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar" todir="C:/Users/Thoma/Coding/mc/1.21.1/plugins"/>
                             </target>
                         </configuration>
                     </execution>
