@@ -58,6 +58,11 @@ commands:
     usage: /<command> <player>
     permission: reincarceration.admin.forcereset
     permission-message: You don't have permission to use this command.
+  rcreward:
+    description: Manually give completion rewards to a player for a specific modifier
+    usage: /<command> <player> <modifier_id>
+    permission: reincarceration.admin.reward
+    permission-message: You don't have permission to use this command.
 
 #  reoffender:
 #    description: Check your current reoffender status
@@ -136,4 +141,7 @@ permissions:
     default: op
   reincarceration.admin.invisible:
     description: Makes the player invisible in the online players GUI
+    default: op
+  reincarceration.admin.reward:
+    description: Allows giving manual rewards to players
     default: op
