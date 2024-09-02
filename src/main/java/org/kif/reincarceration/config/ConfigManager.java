@@ -1,6 +1,7 @@
 package org.kif.reincarceration.config;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,6 +14,7 @@ import java.util.Objects;
 public class ConfigManager {
     private final Reincarceration plugin;
     private final FileConfiguration config;
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public ConfigManager(Reincarceration plugin, FileConfiguration config) {
         this.plugin = plugin;
@@ -52,8 +54,9 @@ public class ConfigManager {
         return config.getString("permissions.entry-group", "citizen");
     }
 
-    public String getPrefix() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("prefix", "&8[&6Reincarceration&8] &r"));
+    public Component getPrefix() {
+        String rawPrefix = config.getString("prefix", "<dark_gray>[<gold>Reincarceration<dark_gray>] ");
+        return miniMessage.deserialize(rawPrefix);
     }
 
     public boolean isDebugMode() {
@@ -77,7 +80,7 @@ public class ConfigManager {
     }
 
     public int getReoffenderVaultNumber() {
-        return config.getInt("reoffender-vault-number", 11); // Default to vault 1 if not specified
+        return config.getInt("reoffender-vault-number", 11); // Default to vault 15 if not specified
     }
 
     public BigDecimal getRandomModifierDiscount() {

@@ -11,9 +11,9 @@ depend:
     WorldGuard,
     ChestShop,
     KillionCommons,
-    SimpleRegions
+    SimpleRegions,
+    CustomTags
   ]
-softdepend: [CustomTags]
 description: A reoffender system plugin with challenges and ranks.
 
 commands:

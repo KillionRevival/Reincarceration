@@ -352,7 +352,7 @@ public class CompactModifier extends AbstractModifier implements Listener {
     public boolean handleVaultAccess(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         event.setCancelled(true);
-        MessageUtil.sendPrefixMessage(player, "&cVault Access Denied - You are not allowed to access vaults.");
+        MessageUtil.sendPrefixMessage(player, "<red>Vault Access Denied - You are not allowed to access vaults.");
         return true;
     }
 

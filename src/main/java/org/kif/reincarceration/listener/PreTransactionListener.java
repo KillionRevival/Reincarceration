@@ -45,7 +45,7 @@ public class PreTransactionListener implements Listener {
         }
 
         if (!areAllItemsFlagged(player)) {
-            MessageUtil.sendPrefixMessage(player, "&cTransaction Denied: Prohibited Items found on Player.");
+            MessageUtil.sendPrefixMessage(player, "<red>Transaction Denied: Prohibited Items found on Player.");
             event.setCancelled(true);
             return;
         }

@@ -1,5 +1,6 @@
 package org.kif.reincarceration.gui;
 
+import lombok.Getter;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.core.Module;
 import org.kif.reincarceration.core.CoreModule;
@@ -12,6 +13,7 @@ import org.kif.reincarceration.rank.RankModule;
 import org.kif.reincarceration.permission.PermissionManager;
 import org.kif.reincarceration.util.ConsoleUtil;
 
+@Getter
 public class GUIModule implements Module {
     private final Reincarceration plugin;
     private GUIManager guiManager;
@@ -49,11 +51,4 @@ public class GUIModule implements Module {
         ConsoleUtil.sendSuccess("GUI Module disabled");
     }
 
-    public GUIManager getGuiManager() {
-        return guiManager;
-    }
-
-    public Reincarceration getPlugin() {
-        return plugin;
-    }
 }

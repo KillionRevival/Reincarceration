@@ -77,7 +77,7 @@ public class PayCommandListener implements Listener {
                     }
                 } catch (SQLException e) {
                     ConsoleUtil.sendError("Error processing payment: " + e.getMessage());
-                    MessageUtil.sendPrefixMessage(sender, "&cAn error occurred while processing the payment. Please try again later.");
+                    MessageUtil.sendPrefixMessage(sender, "<red>An error occurred while processing the payment. Please try again later.");
                 }
             }
             // If neither player is in the system, do nothing and let the normal economy plugin handle it
@@ -96,12 +96,12 @@ public class PayCommandListener implements Listener {
                 // Recipient is outside the system, add to their regular balance
                 economyManager.depositMoney(recipient, amount);
             }
-            MessageUtil.sendPrefixMessage(sender, "&aYou have sent $" + amount.toPlainString() + " to " + recipient.getName() + ".");
+            MessageUtil.sendPrefixMessage(sender, "<green>You have sent $" + amount.toPlainString() + " to " + recipient.getName() + ".");
             if (recipient.getPlayer() != null) {
-                MessageUtil.sendPrefixMessage(recipient.getPlayer(), "&aYou have received $" + amount.toPlainString() + " from " + sender.getName() + ".");
+                MessageUtil.sendPrefixMessage(recipient.getPlayer(), "<green>You have received $" + amount.toPlainString() + " from " + sender.getName() + ".");
             }
         } else {
-            MessageUtil.sendPrefixMessage(sender, "&cYou don't have enough stored balance to send $" + amount.toPlainString() + ".");
+            MessageUtil.sendPrefixMessage(sender, "<red>You don't have enough stored balance to send $" + amount.toPlainString() + ".");
         }
     }
 
@@ -110,12 +110,12 @@ public class PayCommandListener implements Listener {
             economyManager.withdrawMoney(sender, amount);
             BigDecimal recipientStoredBalance = dataManager.getStoredBalance(recipient.getUniqueId());
             dataManager.setStoredBalance(recipient.getUniqueId(), recipientStoredBalance.add(amount));
-            MessageUtil.sendPrefixMessage(sender, "&aYou have sent $" + amount.toPlainString() + " to " + recipient.getName() + "'s stored balance.");
+            MessageUtil.sendPrefixMessage(sender, "<green>You have sent $" + amount.toPlainString() + " to " + recipient.getName() + "'s stored balance.");
             if (recipient.getPlayer() != null) {
-                MessageUtil.sendPrefixMessage(recipient.getPlayer(), "&aYou have received $" + amount.toPlainString() + " in your stored balance from " + sender.getName() + ".");
+                MessageUtil.sendPrefixMessage(recipient.getPlayer(), "<green>aYou have received $" + amount.toPlainString() + " in your stored balance from " + sender.getName() + ".");
             }
         } else {
-            MessageUtil.sendPrefixMessage(sender, "&cYou don't have enough money to send $" + amount.toPlainString() + ".");
+            MessageUtil.sendPrefixMessage(sender, "<red>You don't have enough money to send $" + amount.toPlainString() + ".");
         }
     }
 }

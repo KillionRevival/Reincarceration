@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.data.DataManager;
 import org.kif.reincarceration.data.DataModule;
@@ -17,25 +18,26 @@ import java.util.UUID;
 
 public class ViewPlayerDataCommand implements CommandExecutor {
 
-    private final Reincarceration plugin;
     private final DataManager dataManager;
 
     public ViewPlayerDataCommand(Reincarceration plugin) {
-        this.plugin = plugin;
         this.dataManager = plugin.getModuleManager().getModule(DataModule.class).getDataManager();
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        Player player = (Player) sender;
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("This command can only be used by players.");
+            return true;
+        }
 
         if (!sender.isOp() && !sender.hasPermission("reincarceration.admin.viewplayerdata")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage((Player) sender, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /viewplayerdata <player>");
+            MessageUtil.sendPrefixMessage((Player) sender, "<red>Usage: /viewplayerdata <player>");
             return true;
         }
 
@@ -44,25 +46,24 @@ public class ViewPlayerDataCommand implements CommandExecutor {
         UUID playerUUID = targetPlayer != null ? targetPlayer.getUniqueId() : null;
 
         if (playerUUID == null) {
-            MessageUtil.sendPrefixMessage(player, "&cPlayer not found in the database.");
+            MessageUtil.sendPrefixMessage((Player) sender, "<red>Player not found in the database.");
             return true;
         }
 
         try {
             displayPlayerData(sender, playerUUID, playerName);
         } catch (SQLException e) {
-            MessageUtil.sendPrefixMessage(player, "&cError retrieving player data: " + e.getMessage());
+            MessageUtil.sendPrefixMessage((Player) sender, "<red>Error retrieving player data: " + e.getMessage());
         }
 
         return true;
     }
 
     private void displayPlayerData(CommandSender sender, UUID playerUUID, String playerName) throws SQLException {
-
         Player player = (Player) sender;
 
-        MessageUtil.sendPrefixMessage(player, "&6=== Player Data for " + playerName + " ===");
-        MessageUtil.sendPrefixMessage(player, "&7UUID: &f" + playerUUID);
+        MessageUtil.sendPrefixMessage(player, "<gold><bold>=== Player Data for " + playerName + " ===</bold>");
+        MessageUtil.sendPrefixMessage(player, "<gray>UUID: <white>" + playerUUID);
 
         // Player Data
         int currentRank = dataManager.getPlayerRank(player);
@@ -70,48 +71,24 @@ public class ViewPlayerDataCommand implements CommandExecutor {
         int cycleCount = dataManager.getPlayerCycleCount(player);
         BigDecimal storedBalance = dataManager.getStoredBalance(player);
 
-        MessageUtil.sendPrefixMessage(player, "&7Current Rank: &f" + currentRank);
-        MessageUtil.sendPrefixMessage(player, "&7In Cycle: &f" + (inCycle ? "Yes" : "No"));
-        MessageUtil.sendPrefixMessage(player, "&7Cycle Count: &f" + cycleCount);
-        MessageUtil.sendPrefixMessage(player, "&7Stored Balance: &f" + storedBalance);
+        MessageUtil.sendPrefixMessage(player, "<gray>Current Rank: <white>" + currentRank);
+        MessageUtil.sendPrefixMessage(player, "<gray>In Cycle: <white>" + (inCycle ? "Yes" : "No"));
+        MessageUtil.sendPrefixMessage(player, "<gray>Cycle Count: <white>" + cycleCount);
+        MessageUtil.sendPrefixMessage(player, "<gray>Stored Balance: <white>" + storedBalance);
 
         // Active Modifier
         String activeModifier = dataManager.getActiveModifier(player);
-        MessageUtil.sendPrefixMessage(player, "&7Active Modifier: &f" + (activeModifier != null ? activeModifier : "None"));
+        MessageUtil.sendPrefixMessage(player, "<gray>Active Modifier: <white>" + (activeModifier != null ? activeModifier : "None"));
 
         // Completed Modifiers
         List<String> completedModifiers = dataManager.getCompletedModifiers(player);
-        MessageUtil.sendPrefixMessage(player, "&7Completed Modifiers:");
+        MessageUtil.sendPrefixMessage(player, "<gray>Completed Modifiers:");
         if (completedModifiers.isEmpty()) {
-            MessageUtil.sendPrefixMessage(player, "&f  None");
+            MessageUtil.sendPrefixMessage(player, "<white>  None");
         } else {
             for (String modifier : completedModifiers) {
-                MessageUtil.sendPrefixMessage(player, "&f  - " + modifier);
+                MessageUtil.sendPrefixMessage(player, "<gray>  - <white>" + modifier);
             }
         }
-
-//        // Cycle History
-//        List<CycleHistoryEntry> cycleHistory = dataManager.getCycleHistory(player);
-//        MessageUtil.sendPrefixMessage(player, "&7Cycle History:");
-//        if (cycleHistory.isEmpty()) {
-//            MessageUtil.sendPrefixMessage(player, "&f  No cycle history");
-//        } else {
-//            for (CycleHistoryEntry entry : cycleHistory) {
-//                MessageUtil.sendPrefixMessage(player, "&f  - Modifier: " + entry.getModifierId() +
-//                        ", Start: " + entry.getStartTime() +
-//                        ", End: " + (entry.getEndTime() != null ? entry.getEndTime() : "Ongoing") +
-//                        ", Completed: " + (entry.isCompleted() ? "Yes" : "No"));
-//            }
-//        }
     }
-
-//    // You might need to create this class based on your database structure
-//    private static class CycleHistoryEntry {
-//        private String modifierId;
-//        private String startTime;
-//        private String endTime;
-//        private boolean completed;
-//
-//        // Constructor, getters, and setters
-//    }
 }

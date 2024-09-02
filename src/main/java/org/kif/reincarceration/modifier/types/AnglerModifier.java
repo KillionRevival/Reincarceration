@@ -586,7 +586,7 @@ public class AnglerModifier extends AbstractModifier implements Listener {
                 ConsoleUtil.sendDebug("Angler modifier checking sell transaction for item: " + itemStack.getType());
                 if (!allowedItems.contains(itemStack.getType())) {
                     event.setCancelled(true);
-                    MessageUtil.sendPrefixMessage(player, "&cTransaction Denied - Attempted to sell prohibited items.");
+                    MessageUtil.sendPrefixMessage(player, "<red>Transaction Denied - Attempted to sell prohibited items.");
                     ConsoleUtil.sendDebug("Transaction cancelled because item " + itemStack.getType() + " is not allowed.");
                     return true;
                 }

@@ -70,7 +70,7 @@ public class InventoryClickListener implements Listener {
                 // Allow interactions within player inventory
                 if (event.getClickedInventory() != player.getInventory()) {
                     event.setCancelled(true);
-                    MessageUtil.sendPrefixMessage(player, "&cYou cannot interact with unflagged items outside your inventory.");
+                    MessageUtil.sendPrefixMessage(player, "<red>You cannot interact with unflagged items outside your inventory.");
                     ConsoleUtil.sendDebug("Cancelled inventory click for " + player.getName() + " on unflagged item: " + clickedItem.getType().name());
                     return;
                 }
@@ -81,7 +81,7 @@ public class InventoryClickListener implements Listener {
                 // Allow placing items into player inventory
                 if (event.getClickedInventory() != player.getInventory()) {
                     event.setCancelled(true);
-                    MessageUtil.sendPrefixMessage(player, "&cYou cannot place unflagged items outside your inventory.");
+                    MessageUtil.sendPrefixMessage(player, "<red>You cannot place unflagged items outside your inventory.");
                     ConsoleUtil.sendDebug("Cancelled inventory click for " + player.getName() + " with unflagged cursor item: " + cursorItem.getType().name());
                 }
             }

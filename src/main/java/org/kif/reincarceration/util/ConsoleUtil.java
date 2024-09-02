@@ -1,14 +1,14 @@
 package org.kif.reincarceration.util;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.config.ConfigManager;
 
 public class ConsoleUtil {
 
-    private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private static Reincarceration plugin;
     private static ConfigManager configManager;
@@ -19,26 +19,27 @@ public class ConsoleUtil {
     }
 
     public static void sendFormatMessage(String message) {
-        String prefix = configManager.getPrefix();
-        console.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
+        Component prefix = configManager.getPrefix();
+        Component formattedMessage = prefix.append(miniMessage.deserialize(message));
+        Bukkit.getConsoleSender().sendMessage(formattedMessage);
     }
 
     public static void sendInfo(String message) {
-        sendFormatMessage("&b" + message);
+        sendFormatMessage("<aqua>" + message);
     }
 
     public static void sendError(String message) {
-        sendFormatMessage("&c" + message);
+        sendFormatMessage("<red>" + message);
     }
 
     public static void sendSuccess(String message) {
-        sendFormatMessage("§2" + message);
+        sendFormatMessage("<dark_green>" + message);
     }
 
     public static void sendDebug(String message) {
         boolean debugMode = configManager.isDebugMode();
         if (debugMode) {
-            sendFormatMessage("&d" + message);
+            sendFormatMessage("<light_purple>" + message);
         }
     }
 }

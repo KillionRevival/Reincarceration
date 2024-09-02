@@ -42,13 +42,13 @@ public class RankManager {
         int currentRank = getPlayerRank(player);
         int maxRank = configManager.getMaxRank();
         if (currentRank >= maxRank) {  // Changed from maxRank to maxRank - 1
-            MessageUtil.sendPrefixMessage(player, "&cYou are already at the highest rank for rank up. Expected to use /completecycle instead.");
+            MessageUtil.sendPrefixMessage(player, "<red>You are already at the highest rank for rank up. Please use cycle completion instead.");
             return false;
         }
 
         BigDecimal rankUpCost = configManager.getRankUpCost(currentRank);
         if (!economyManager.hasEnoughBalance(player, rankUpCost)) {
-            MessageUtil.sendPrefixMessage(player, "&cYou do not have enough money to rank up.");
+            MessageUtil.sendPrefixMessage(player, "<red>You do not have enough money to rank up.");
             return false;
         }
 
@@ -68,15 +68,15 @@ public class RankManager {
                 int newRank = currentRank + 1;
                 setPlayerRank(player, newRank);
 
-                BroadcastUtil.broadcastMessage("§c" + player.getName() + " has ranked up to " + configManager.getRankName(newRank));
+                BroadcastUtil.broadcastMessage("<red>" + player.getName() + " has ranked up to " + configManager.getRankName(newRank));
 
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error updating player rank: " + e.getMessage());
                 economyManager.depositMoney(player, rankUpCost);
-                MessageUtil.sendPrefixMessage(player, "&cAn error occurred while trying to rank up. Your money has been refunded. Please try again later.");
+                MessageUtil.sendPrefixMessage(player, "<red>An error occurred while trying to rank up. Your money has been refunded. Please try again later.");
             }
         } else {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while trying to rank up. Please try again later.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while trying to rank up. Please try again later.");
         }
     }
 

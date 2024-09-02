@@ -22,45 +22,45 @@ public class InspectItemCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            ConsoleUtil.sendError("&cThis command can only be used by players.");
+            ConsoleUtil.sendError("This command can only be used by players.");
             return true;
         }
 
         Player player = (Player) sender;
 
         if (!player.isOp() && !player.hasPermission("reincarceration.admin.inspectitem")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (itemInHand.getType().isAir()) {
-            MessageUtil.sendPrefixMessage(player, "&cYou must be holding an item to inspect it.");
+            MessageUtil.sendPrefixMessage(player, "<red>You must be holding an item to inspect it.");
             return true;
         }
 
         boolean hasFlag = ItemUtil.hasReincarcerationFlag(itemInHand);
 
         if (hasFlag) {
-            MessageUtil.sendPrefixMessage(player, "&aThe item in your hand &2IS flagged &afor the reincarceration system.");
+            MessageUtil.sendPrefixMessage(player, "<green>The item in your hand <dark_green>IS flagged <green>for the reincarceration system.");
         } else {
-            MessageUtil.sendPrefixMessage(player, "&cThe item in your hand &4IS NOT flagged &cfor the reincarceration system.");
+            MessageUtil.sendPrefixMessage(player, "<red>The item in your hand <dark_red>IS NOT flagged <red>for the reincarceration system.");
         }
 
         // Additional item information
-        MessageUtil.sendPrefixMessage(player, "&eItem Details:");
-        MessageUtil.sendPrefixMessage(player, "&7- Type: &f" + itemInHand.getType());
-        MessageUtil.sendPrefixMessage(player, "&7- Amount: &f" + itemInHand.getAmount());
+        MessageUtil.sendPrefixMessage(player, "<yellow>Item Details:");
+        MessageUtil.sendPrefixMessage(player, "<gray>- Type: <white>" + itemInHand.getType());
+        MessageUtil.sendPrefixMessage(player, "<gray>- Amount: <white>" + itemInHand.getAmount());
         if (itemInHand.hasItemMeta()) {
             ItemMeta meta = itemInHand.getItemMeta();
             if (meta.hasDisplayName()) {
-                MessageUtil.sendPrefixMessage(player, "&7- Display Name: &f" + meta.getDisplayName());
+                MessageUtil.sendPrefixMessage(player, "<gray>- Display Name: <white>" + meta.getDisplayName());
             }
             if (meta.hasLore()) {
-                MessageUtil.sendPrefixMessage(player, "&7- Lore:");
+                MessageUtil.sendPrefixMessage(player, "<gray>- Lore:");
                 for (String loreLine : meta.getLore()) {
-                    MessageUtil.sendPrefixMessage(player, "&7  &f" + loreLine);
+                    MessageUtil.sendPrefixMessage(player, "<gray>  <white>" + loreLine);
                 }
             }
         }

@@ -61,14 +61,14 @@ public class BlockBreakListener implements Listener {
             // Check if the block is in the blacklist
             if (BlockBlacklist.isBlacklisted(block.getType())) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cYou are not allowed to break this block.");
+                MessageUtil.sendPrefixMessage(player, "<red>You are not allowed to break this block.");
                 ConsoleUtil.sendDebug("Player " + player.getName() + " attempted to break a blacklisted block: " + block.getType());
                 return;
             }
 
             if (!canBreakBlock(player, block)) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cYou cannot break blocks in this area.");
+                MessageUtil.sendPrefixMessage(player, "<red>You cannot break blocks in this area.");
                 return;
             }
 
@@ -88,7 +88,7 @@ public class BlockBreakListener implements Listener {
             ItemStack itemInHand = player.getInventory().getItemInMainHand();
             if (!ItemUtil.hasReincarcerationFlag(itemInHand) && !itemInHand.getType().isAir()) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cYou can only break blocks with flagged items.");
+                MessageUtil.sendPrefixMessage(player, "<red>You can only break blocks with flagged items.");
                 ConsoleUtil.sendDebug("Player " + player.getName() + " attempted to break a block with an unflagged item: " + itemInHand.getType());
                 return;
             }

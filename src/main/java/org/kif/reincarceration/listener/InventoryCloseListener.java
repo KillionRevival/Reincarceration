@@ -80,7 +80,7 @@ public class InventoryCloseListener implements Listener {
 
             player.updateInventory();
 
-            MessageUtil.sendPrefixMessage(player, "&cUnflagged items have been removed from your inventory.");
+            MessageUtil.sendPrefixMessage(player, "<red>Unflagged items have been removed from your inventory.");
             ConsoleUtil.sendDebug("InventoryCloseListener: Removed " + unflaggedItems.size() + " unflagged items from " + player.getName() + "'s inventory");
         } else {
             ConsoleUtil.sendDebug("InventoryCloseListener: No unflagged items found in " + player.getName() + "'s inventory");

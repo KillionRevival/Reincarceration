@@ -52,18 +52,18 @@ public class ForceResetCommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("reincarceration.admin.forcereset") && !player.hasPermission("reincarceration.admin")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /forcereset <player>");
+            MessageUtil.sendPrefixMessage(player, "<red>Usage: /forcereset <player>");
             return true;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
         if (targetPlayer == null) {
-            MessageUtil.sendPrefixMessage(player, "&cPlayer not found or not online.");
+            MessageUtil.sendPrefixMessage(player, "<red>Player not found or not online.");
             return true;
         }
 
@@ -82,12 +82,12 @@ public class ForceResetCommand implements CommandExecutor {
             ConsoleUtil.sendDebug("Reinitializing player data for: " + targetPlayer.getName());
             dataManager.createPlayerData(targetPlayer);
 
-            MessageUtil.sendPrefixMessage(player, "&aYou have forcefully reset " + targetPlayer.getName() + "'s data and removed them from the reincarceration system.");
-            MessageUtil.sendPrefixMessage(targetPlayer, "&cAn admin has forcefully reset your reincarceration data.");
+            MessageUtil.sendPrefixMessage(player, "<green>You have forcefully reset " + targetPlayer.getName() + "'s data and removed them from the reincarceration system.");
+            MessageUtil.sendPrefixMessage(targetPlayer, "<red>An admin has forcefully reset your reincarceration data.");
             ConsoleUtil.sendInfo("Admin " + player.getName() + " has forcefully reset " + targetPlayer.getName() + "'s reincarceration data.");
 
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while resetting the player's data.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while resetting the player's data.");
             ConsoleUtil.sendError("Error in ForceResetCommand for player " + targetPlayer.getName() + " (UUID: " + targetPlayer.getUniqueId() + "): " + e.getMessage());
             cycleModule.getPlugin().getLogger().log(Level.SEVERE, "Error in ForceResetCommand", e);
         }

@@ -30,15 +30,13 @@ public class ListModifiersCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(configManager.getPrefix() + "This command can only be used by players.");
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("reincarceration.listmodifiers")) {
-            MessageUtil.sendPrefixMessage(player, "&cInsufficent Permissions");
+            MessageUtil.sendPrefixMessage(player, "<red>Insufficent Permissions");
             ConsoleUtil.sendError("Player " + player.getName() + " does not have permission to use /listmodifiers! Review permissions!");
             return true;
         }
@@ -48,16 +46,16 @@ public class ListModifiersCommand implements CommandExecutor {
             List<IModifier> availableModifiers = modifierRegistry.getAvailableModifiers(completedModifiers);
 
             if (availableModifiers.isEmpty()) {
-                MessageUtil.sendPrefixMessage(player, "&2You have completed all available modifiers!");
+                MessageUtil.sendPrefixMessage(player, "<dark_green>You have completed all available modifiers!");
             } else {
 
-                MessageUtil.sendPrefixMessage(player, "&2Available modifiers:");
+                MessageUtil.sendPrefixMessage(player, "<dark_green>Available modifiers:");
                 for (IModifier modifier : availableModifiers) {
-                    MessageUtil.sendPrefixMessage(player, "&2- " + modifier.getName() + " (" + modifier.getId() + "): " + modifier.getDescription());
+                    MessageUtil.sendPrefixMessage(player, "<dark_green>- " + modifier.getName() + " (" + modifier.getId() + "): " + modifier.getDescription());
                 }
             }
         } catch (SQLException e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while retrieving modifiers. Please try again later.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while retrieving modifiers. Please try again later.");
             commandModule.getPlugin().getLogger().severe("Error in ListModifiersCommand: " + e.getMessage());
         }
 

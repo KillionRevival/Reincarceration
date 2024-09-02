@@ -54,52 +54,50 @@ public class RewardCommand implements CommandExecutor {
      */
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             ConsoleUtil.sendError("This command can only be executed by a player.");
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("reincarceration.admin.reward")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 2) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /rcreward <player> <modifier_id>");
+            MessageUtil.sendPrefixMessage(player, "<red>Usage: /rcreward <player> <modifier_id>");
             return true;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
         if (targetPlayer == null) {
-            MessageUtil.sendPrefixMessage(player, "&cPlayer not found.");
+            MessageUtil.sendPrefixMessage(player, "<red>Player not found.");
             return true;
         }
 
         String modifierId = args[1];
         IModifier modifier = modifierManager.getModifierById(modifierId);
         if (modifier == null) {
-            MessageUtil.sendPrefixMessage(player, "&cInvalid modifier ID.");
+            MessageUtil.sendPrefixMessage(player, "<red>Invalid modifier ID.");
             return true;
         }
 
         try {
             if (!dataManager.hasCompletedModifier(targetPlayer, modifierId)) {
-                MessageUtil.sendPrefixMessage(player, "&cPlayer has not completed this modifier.");
+                MessageUtil.sendPrefixMessage(player, "<red>Player has not completed this modifier.");
                 return true;
             }
 
             rewardManager.setPlayerNeedsReward(targetPlayer, modifier);
             rewardManager.rewardPlayer(targetPlayer);
-            MessageUtil.sendPrefixMessage(player, "&aSuccessfully rewarded " + targetPlayer.getName() + " for completing the " + modifier.getName() + " modifier.");
+            MessageUtil.sendPrefixMessage(player, "<green>Successfully rewarded " + targetPlayer.getName() + " for completing the " + modifier.getName() + " modifier.");
             ConsoleUtil.sendInfo("Admin " + player.getName() + " manually rewarded " + targetPlayer.getName() + " for modifier: " + modifierId);
         } catch (SQLException e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while checking modifier completion status.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while checking modifier completion status.");
             ConsoleUtil.sendError("SQL error in RewardCommand: " + e.getMessage());
             plugin.getLogger().log(Level.SEVERE, "SQL error in RewardCommand", e);
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn unexpected error occurred while processing the reward.");
+            MessageUtil.sendPrefixMessage(player, "<red>An unexpected error occurred while processing the reward.");
             ConsoleUtil.sendError("Unexpected error in RewardCommand: " + e.getMessage());
             plugin.getLogger().log(Level.SEVERE, "Unexpected error in RewardCommand", e);
         }

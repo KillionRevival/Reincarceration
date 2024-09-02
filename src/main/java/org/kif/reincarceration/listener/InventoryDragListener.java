@@ -36,7 +36,7 @@ public class InventoryDragListener implements Listener {
                     ItemStack draggedItem = event.getNewItems().get(slot);
                     if (draggedItem != null && !draggedItem.getType().isAir() && !ItemUtil.hasReincarcerationFlag(draggedItem)) {
                         event.setCancelled(true);
-                        MessageUtil.sendPrefixMessage(player, "&cYou cannot drag unflagged items outside your inventory.");
+                        MessageUtil.sendPrefixMessage(player, "<red>You cannot drag unflagged items outside your inventory.");
                         ConsoleUtil.sendDebug("Cancelled inventory drag for " + player.getName() + " involving unflagged item: " + draggedItem.getType().name());
                         return;
                     }

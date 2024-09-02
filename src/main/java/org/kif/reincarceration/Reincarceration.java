@@ -1,11 +1,13 @@
 package org.kif.reincarceration;
 
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.entity.Player;
 import org.kif.reincarceration.core.CoreModule;
 import org.kif.reincarceration.core.ModuleManager;
 import org.kif.reincarceration.api.ReincarcerationAPI;
@@ -27,9 +29,10 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+@Getter
 public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
     private ModuleManager moduleManager;
-    private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Override
     public void onEnable() {
@@ -139,22 +142,17 @@ public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
 
     @Override
     public void onDisable() {
-        String prefix = moduleManager.getConfigManager().getPrefix();
+        Component prefix = moduleManager.getConfigManager().getPrefix();
         // Disable all modules
         if (moduleManager != null) {
             moduleManager.disableAllModules();
         }
         if (prefix != null) {
-            console.sendMessage(
-                    ChatColor.translateAlternateColorCodes('&', prefix + "&2Reincarceration has been disabled!"));
+            Component message = prefix.append(miniMessage.deserialize("<green>Reincarceration has been disabled!"));
+            Bukkit.getConsoleSender().sendMessage(message);
         } else {
-            console.sendMessage(ChatColor.RED + "[Reincarceration] has been disabled!");
+            Bukkit.getConsoleSender().sendMessage(Component.text("Reincarceration has been disabled!", NamedTextColor.RED));
         }
-        // getLogger().info("Reincarceration has been disabled!");
-    }
-
-    public ModuleManager getModuleManager() {
-        return moduleManager;
     }
 
     // API Methods

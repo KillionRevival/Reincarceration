@@ -163,11 +163,11 @@ public class LumberjackModifier extends AbstractModifier implements Listener {
                 spawnedWolves.add(wolf);
             } else {
                 // If a valid location isn't found, send a message (or handle accordingly)
-                ConsoleUtil.sendError("&cFailed to find a valid spawn location for a wolf.");
+                ConsoleUtil.sendError("Failed to find a valid spawn location for a wolf.");
             }
         }
 
-//        MessageUtil.sendPrefixMessage(player, "&cA pack of wolves has appeared!");
+//        MessageUtil.sendPrefixMessage(player, "<red>A pack of wolves has appeared!");
 
         // Periodically update wolf targets and check for despawn
         new BukkitRunnable() {
@@ -252,7 +252,7 @@ public class LumberjackModifier extends AbstractModifier implements Listener {
 //                    ConsoleUtil.sendDebug("Item Meta: " + itemStack.getItemMeta());
 //                    if (!allowedItems.contains(itemStack.getType())) {
 //                        event.setCancelled(true);
-//                        MessageUtil.sendPrefixMessage(player, "&cTransaction Denied - Attempted to sell prohibited items.");
+//                        MessageUtil.sendPrefixMessage(player, "<red>Transaction Denied - Attempted to sell prohibited items.");
 //                        ConsoleUtil.sendDebug("Transaction cancelled because item " + itemStack.getType() + " is not allowed.");
 //                        ConsoleUtil.sendDebug("Cancelled: " + event.isCancelled());
 //                        return true;
@@ -274,7 +274,7 @@ public class LumberjackModifier extends AbstractModifier implements Listener {
             if (itemStack != null) {
                 if (!allowedItems.contains(itemStack.getType())) {
                     event.setCancelled(true);
-                    MessageUtil.sendPrefixMessage(player, "&cTransaction Denied - Attempted to sell prohibited items.");
+                    MessageUtil.sendPrefixMessage(player, "<red>Transaction Denied - Attempted to sell prohibited items.");
                     ConsoleUtil.sendDebug("Lumberjack modifier cancelled transaction because item " + itemStack.getType() + " is not allowed.");
                     return true;
                 }

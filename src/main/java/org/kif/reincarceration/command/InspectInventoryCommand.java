@@ -52,18 +52,18 @@ public class InspectInventoryCommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("reincarceration.admin.inspectinventory") && !player.hasPermission("reincarceration.admin")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /inspectinventory <player>");
+            MessageUtil.sendPrefixMessage(player, "<red>Usage: /inspectinventory <player>");
             return true;
         }
 
         Player target = Bukkit.getPlayer(args[0]);
         if (target == null) {
-            MessageUtil.sendPrefixMessage(player, "&cPlayer not found or not online.");
+            MessageUtil.sendPrefixMessage(player, "<red>Player not found or not online.");
             return true;
         }
 
@@ -82,23 +82,23 @@ public class InspectInventoryCommand implements CommandExecutor {
 
             if (isAssociated) {
                 if (violatingItems.isEmpty()) {
-                    MessageUtil.sendPrefixMessage(player, "&aNo unflagged items found in " + target.getName() + "'s inventory.");
+                    MessageUtil.sendPrefixMessage(player, "<green>No unflagged items found in " + target.getName() + "'s inventory.");
                 } else {
-                    MessageUtil.sendPrefixMessage(player, "&cUnflagged items found in " + target.getName() + "'s inventory:");
+                    MessageUtil.sendPrefixMessage(player, "<red>Unflagged items found in " + target.getName() + "'s inventory:");
                     listViolatingItems(player, violatingItems);
                 }
             } else {
                 if (violatingItems.isEmpty()) {
-                    MessageUtil.sendPrefixMessage(player, "&aNo flagged items found in " + target.getName() + "'s inventory.");
+                    MessageUtil.sendPrefixMessage(player, "<green>No flagged items found in " + target.getName() + "'s inventory.");
                 } else {
-                    MessageUtil.sendPrefixMessage(player, "&cFlagged items found in " + target.getName() + "'s inventory:");
+                    MessageUtil.sendPrefixMessage(player, "<red>Flagged items found in " + target.getName() + "'s inventory:");
                     listViolatingItems(player, violatingItems);
                 }
             }
 
             ConsoleUtil.sendInfo("Admin " + player.getName() + " inspected " + target.getName() + "'s inventory.");
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while inspecting the inventory.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while inspecting the inventory.");
             ConsoleUtil.sendError("Error in InspectInventoryCommand: " + e.getMessage());
             plugin.getLogger().log(Level.SEVERE, "Error in InspectInventoryCommand", e);
         }
@@ -117,7 +117,7 @@ public class InspectInventoryCommand implements CommandExecutor {
             String itemName = item.hasItemMeta() && item.getItemMeta().hasDisplayName()
                     ? item.getItemMeta().getDisplayName()
                     : item.getType().toString();
-            MessageUtil.sendPrefixMessage(sender, "&7- &f" + itemName + " &7x" + item.getAmount());
+            MessageUtil.sendPrefixMessage(sender, "<gray>- <white>" + itemName + " <gray>x" + item.getAmount());
         }
     }
 }

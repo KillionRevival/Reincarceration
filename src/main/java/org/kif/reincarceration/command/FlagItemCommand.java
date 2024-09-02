@@ -47,28 +47,28 @@ public class FlagItemCommand implements CommandExecutor {
         }
 
         if (!player.isOp() && (!player.hasPermission("reincarceration.admin.flagitem") || !player.hasPermission("reincarceration.admin"))) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
 
         if (itemInHand.getType().isAir()) {
-            MessageUtil.sendPrefixMessage(player, "&cYou must be holding an item to flag it.");
+            MessageUtil.sendPrefixMessage(player, "<red>You must be holding an item to flag it.");
             return true;
         }
 
         try {
             if (ItemUtil.hasReincarcerationFlag(itemInHand)) {
-                MessageUtil.sendPrefixMessage(player, "&cThis item is already flagged.");
+                MessageUtil.sendPrefixMessage(player, "<red>This item is already flagged.");
                 return true;
             }
 
             ItemUtil.addReincarcerationFlag(itemInHand);
-            MessageUtil.sendPrefixMessage(player, "&aSuccessfully added flag to the item in your hand.");
+            MessageUtil.sendPrefixMessage(player, "<green>Successfully added flag to the item in your hand.");
             ConsoleUtil.sendInfo("Admin " + player.getName() + " flagged item: " + itemInHand.getType());
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while trying to flag the item.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while trying to flag the item.");
             ConsoleUtil.sendError("Error in FlagItemCommand: " + e.getMessage());
             plugin.getLogger().log(Level.SEVERE, "Error in FlagItemCommand", e);
         }

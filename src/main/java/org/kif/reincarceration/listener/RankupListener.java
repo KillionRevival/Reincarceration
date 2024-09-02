@@ -1,6 +1,5 @@
 package org.kif.reincarceration.listener;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,11 +10,12 @@ import org.kif.reincarceration.cycle.CycleModule;
 import org.kif.reincarceration.rank.RankManager;
 import org.kif.reincarceration.rank.RankModule;
 import org.kif.reincarceration.util.ConsoleUtil;
+import org.kif.reincarceration.util.MessageUtil;
 
 public class RankupListener implements Listener {
-    private Reincarceration plugin;
-    private CycleManager cycleManager;
-    private RankManager rankManager;
+    private final Reincarceration plugin;
+    private final CycleManager cycleManager;
+    private final RankManager rankManager;
 
     public RankupListener(Reincarceration plugin) {
         this.plugin = plugin;
@@ -34,15 +34,15 @@ public class RankupListener implements Listener {
                 try {
                     if (rankManager.canRankUp(player)) {
                         rankManager.rankUp(player);
-                        player.sendMessage(ChatColor.GREEN + "You've successfully ranked up!");
+                        MessageUtil.sendPrefixMessage(player, "<green>You've successfully ranked up!");
                     } else {
-                        player.sendMessage(ChatColor.RED + "You can't rank up right now.");
+                        MessageUtil.sendPrefixMessage(player, "<red>You can't rank up right now.");
                     }
                 } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error ranking up: " + e.getMessage());
+                    MessageUtil.sendPrefixMessage(player, "<red>Error ranking up: " + e.getMessage());
                 }
 
-                // Cancel the reset of processing for the rankup command
+                // Cancel the rest of processing for the rankup command
                 event.setCancelled(true);
             }
         }

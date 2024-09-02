@@ -43,7 +43,7 @@ permissions:
   base-group: "reoffender" # The base group for all reoffenders
 
 # Plugin messaging
-prefix: "&8[&6Reincarceration&8] &r"  # Prefix for all plugin messages
+prefix: "<dark_gray>[<gold>Reincarceration<dark_gray>] "
 
 # Debug mode (set to true for additional logging)
 debug-mode: false

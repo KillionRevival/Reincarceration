@@ -20,7 +20,6 @@ import org.kif.reincarceration.util.VaultUtil;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 public class CycleManager {
@@ -62,7 +61,7 @@ public class CycleManager {
         }
 
         if (!economyManager.hasEnoughBalance(player, entryFee)) {
-            MessageUtil.sendPrefixMessage(player, "&cInsufficient Funds. Entry Fee: " + entryFee);
+            MessageUtil.sendPrefixMessage(player, "<red>Insufficient Funds. Entry Fee: " + entryFee);
             return;
         }
 
@@ -103,26 +102,26 @@ public class CycleManager {
                 }, 60L);
 
                 if (isRandomSelection) {
-                    BroadcastUtil.broadcastMessage("§c" + player.getName() + " randomly admitted with the " + modifier.getName() + " modifier");
+                    BroadcastUtil.broadcastMessage("<red>" + player.getName() + " randomly admitted with the " + modifier.getName() + " modifier");
                 } else {
-                    BroadcastUtil.broadcastMessage("§c" + player.getName() + " admitted with the " + modifier.getName() + " modifier");
+                    BroadcastUtil.broadcastMessage("<red>" + player.getName() + " admitted with the " + modifier.getName() + " modifier");
                 }
             } catch (SQLException e) {
                 logSevere("Error starting new cycle: " + e.getMessage());
-                MessageUtil.sendPrefixMessage(player, "&cError during cycle start. Your entry fee has been refunded.");
+                MessageUtil.sendPrefixMessage(player, "<red>Error during cycle start. Your entry fee has been refunded.");
             }
         } else {
             economyManager.setBalance(player, currentBalance); // Refund the entry fee
-            ConsoleUtil.sendError("&cAn error occurred while trying to start a new cycle. Please try again later.");
+            ConsoleUtil.sendError("<red>An error occurred while trying to start a new cycle. Please try again later.");
             MessageUtil.sendPrefixMessage(player,
-                    "&cAn error occurred while trying to start a new cycle. Please try again later.");
+                    "<red>An error occurred while trying to start a new cycle. Please try again later.");
         }
     }
 
     public void completeCycle(Player player) {
         try {
             if (!dataManager.isPlayerInCycle(player)) {
-                MessageUtil.sendPrefixMessage(player, "&cInvalid: Not currently in a cycle.");
+                MessageUtil.sendPrefixMessage(player, "<red>Invalid: Not currently in a cycle.");
                 ConsoleUtil.sendError("Player " + player.getName()
                         + " was detected attempting to complete a cycle without being in a cycle. Review player's data and permission setup!");
                 return;
@@ -133,7 +132,7 @@ public class CycleManager {
 
             if (currentRank < maxRank) {
                 MessageUtil.sendPrefixMessage(player,
-                        "&cInsufficent Rank: " + maxRank + " required to complete the cycle.");
+                        "<red>Insufficent Rank: " + maxRank + " required to complete the cycle.");
                 ConsoleUtil.sendError("Player " + player.getName()
                         + " was detected attempting to complete a cycle without reaching the maximum rank. Review player's data and permission setup!");
                 return;
@@ -142,7 +141,7 @@ public class CycleManager {
             BigDecimal finalRankUpCost = configManager.getRankUpCost(currentRank);
             if (!economyManager.hasEnoughBalance(player, finalRankUpCost)) {
                 MessageUtil.sendPrefixMessage(player,
-                        "&cInsufficent Funds: " + finalRankUpCost + " required to complete the cycle.");
+                        "<red>Insufficent Funds: " + finalRankUpCost + " required to complete the cycle.");
                 return;
             }
 
@@ -173,20 +172,20 @@ public class CycleManager {
             player.setHealth(0.0);
             VaultUtil.ensureVaultCleared(player.getUniqueId().toString(), 3);
 
-            BroadcastUtil.broadcastMessage("§c" + player.getName() + " completed the cycle with the "
+            BroadcastUtil.broadcastMessage("<red>" + player.getName() + " completed the cycle with the "
                     + activeModifier.getName() + " modifier");
 
         } catch (SQLException e) {
             logSevere("Error completing cycle: " + e.getMessage());
             MessageUtil.sendPrefixMessage(player,
-                    "&cerror occurred while completing the cycle. Please try again later.");
+                    "<red>error occurred while completing the cycle. Please try again later.");
         }
     }
 
     public void quitCycle(Player player) {
         try {
             if (!dataManager.isPlayerInCycle(player)) {
-                MessageUtil.sendPrefixMessage(player, "&cInvalid: Not currently in a cycle.");
+                MessageUtil.sendPrefixMessage(player, "<red>Invalid: Not currently in a cycle.");
                 ConsoleUtil.sendError("Player " + player.getName()
                         + " reached quitCycle method without being in a cycle. Review player's data and permission setup!");
                 return;
@@ -220,13 +219,13 @@ public class CycleManager {
             VaultUtil.ensureVaultCleared(player.getUniqueId().toString(), 3);
 
             BroadcastUtil.broadcastMessage(
-                    "§c" + player.getName() + " has been discharged as a result of their inability to overcome the "
+                    "<red>" + player.getName() + " has been discharged as a result of their inability to overcome the "
                             + activeModifier.getName() + " modifier");
 
         } catch (SQLException e) {
             logSevere("Error quitting cycle: " + e.getMessage());
             MessageUtil.sendPrefixMessage(player,
-                    "&cAn error occurred while quitting the cycle. Please try again later.");
+                    "<red>An error occurred while quitting the cycle. Please try again later.");
         }
     }
 

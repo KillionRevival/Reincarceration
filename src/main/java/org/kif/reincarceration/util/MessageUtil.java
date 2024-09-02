@@ -1,6 +1,7 @@
 package org.kif.reincarceration.util;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.config.ConfigManager;
@@ -9,6 +10,7 @@ public class MessageUtil {
 
     private static Reincarceration plugin;
     private static ConfigManager configManager;
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     public static void initialize(Reincarceration plugin) {
         MessageUtil.plugin = plugin;
@@ -16,21 +18,23 @@ public class MessageUtil {
     }
 
     public static void sendMessage(Player player, String message) {
-        String formattedMessage = formatMessage(message, false);
+        Component formattedMessage = formatMessage(message, false);
         player.sendMessage(formattedMessage);
     }
 
     public static void sendPrefixMessage(Player player, String message) {
-        String formattedMessage = formatMessage(message, true);
+        Component formattedMessage = formatMessage(message, true);
         player.sendMessage(formattedMessage);
     }
 
-    private static String formatMessage(String message, Boolean prefix_toggle) {
-        if (prefix_toggle) {
-            String prefix = configManager.getPrefix();
-            return ChatColor.translateAlternateColorCodes('&', prefix + message);
+    private static Component formatMessage(String message, boolean prefixToggle) {
+        Component messageComponent = miniMessage.deserialize(message);
+
+        if (prefixToggle) {
+            Component prefix = configManager.getPrefix();
+            return Component.empty().append(prefix).append(Component.space()).append(messageComponent);
         } else {
-            return ChatColor.translateAlternateColorCodes('&', message);
+            return messageComponent;
         }
     }
 }

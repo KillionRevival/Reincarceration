@@ -20,20 +20,18 @@ public class QuitCycleCommand  implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             ConsoleUtil.sendError("Command can only be executed by a player.");
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("reincarceration.quitcycle")) {
-            MessageUtil.sendPrefixMessage(player, "&cInsufficent Permissions");
+            MessageUtil.sendPrefixMessage(player, "<red>Insufficent Permissions");
             return true;
         }
 
         if (!cycleManager.isPlayerInCycle(player)) {
-            MessageUtil.sendPrefixMessage(player, "&cInvalid Cycle Presence");
+            MessageUtil.sendPrefixMessage(player, "<red>Invalid Cycle Presence");
             ConsoleUtil.sendError("Player " + player.getName() + " is not in a cycle but has permissions! Review permissions!");
             return true;
         }

@@ -58,7 +58,7 @@ public class ContainerInteractionListener implements Listener {
         if (isAssociated) {
             if (isBlacklistedInventory(inventory)) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cThis container has been blacklisted from you.");
+                MessageUtil.sendPrefixMessage(player, "<red>This container has been blacklisted from you.");
                 ConsoleUtil.sendDebug("Blocked blacklisted inventory open for " + player.getName() + ": " + inventory.getType());
                 return;
             }
@@ -70,14 +70,14 @@ public class ContainerInteractionListener implements Listener {
             // Check player's inventory for unflagged items
             if (playerHasUnflaggedItems(player)) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cYou have prohibitted items on your person. Please remove them before accessing this container.");
+                MessageUtil.sendPrefixMessage(player, "<red>You have prohibitted items on your person. Please remove them before accessing this container.");
                 ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": player has unflagged items");
                 return;
             }
 
             if (containsUnflaggedItem(inventory)) {
                 event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cThis container has prohibited contents.");
+                MessageUtil.sendPrefixMessage(player, "<red>This container has prohibited contents.");
                 ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": contains unflagged items");
                 return;
             }
@@ -87,7 +87,7 @@ public class ContainerInteractionListener implements Listener {
                 if (player.getOpenInventory().getTopInventory().equals(inventory)) {
                     if (containsUnflaggedItem(inventory) || playerHasUnflaggedItems(player)) {
                         player.closeInventory();
-                        MessageUtil.sendPrefixMessage(player, "&cThis container has been closed due to prohibitted items detection.");
+                        MessageUtil.sendPrefixMessage(player, "<red>This container has been closed due to prohibitted items detection.");
                         ConsoleUtil.sendDebug("Closed inventory for " + player.getName() + ": unflagged items detected");
                     }
                 } else {
@@ -109,11 +109,10 @@ public class ContainerInteractionListener implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) {
+        if (!(event.getPlayer() instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
 
         // Remove player from container viewers

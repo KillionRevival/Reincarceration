@@ -82,7 +82,7 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
 
         if (!allowedTools.contains(itemInHand.getType()) && isTool(itemInHand.getType())) {
             event.setCancelled(true);
-            MessageUtil.sendPrefixMessage(player, "&cYou can only use basic tools!");
+            MessageUtil.sendPrefixMessage(player, "<red>You can only use basic tools!");
             ConsoleUtil.sendDebug(player.getName() + " attempted to use " + itemInHand.getType()
                     + " but was prevented by Neolithic Modifier");
             return true;
@@ -96,11 +96,10 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
 
     @EventHandler
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof Player player)) {
             return;
         }
 
-        Player player = (Player) event.getDamager();
         if (!isActive(player)) {
             return;
         }
@@ -108,7 +107,7 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
         if (!allowedTools.contains(itemInHand.getType()) && isTool(itemInHand.getType())) {
             event.setCancelled(true);
-            MessageUtil.sendPrefixMessage(player, "&cYou can only deal damage with basic tools!");
+            MessageUtil.sendPrefixMessage(player, "<red>You can only deal damage with basic tools!");
             ConsoleUtil.sendDebug(player.getName() + " attempted to deal damage with " + itemInHand.getType()
                     + " but was prevented by Neolithic Modifier");
         }

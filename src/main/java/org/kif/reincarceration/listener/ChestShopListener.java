@@ -52,7 +52,7 @@ public class ChestShopListener implements Listener {
 
             final Player player = Bukkit.getServer().getPlayer(seller);
             if (player != null) {
-                MessageUtil.sendPrefixMessage(player, "&4You are currently in a cycle, so your ChestShop transaction has been placed with your stored balance.");
+                MessageUtil.sendPrefixMessage(player, "<dark_red>You are currently in a cycle, so your ChestShop transaction has been placed with your stored balance.");
             }
         } catch (SQLException e) {
             event.setHandled(false);

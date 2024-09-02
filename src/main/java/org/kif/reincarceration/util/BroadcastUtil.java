@@ -1,7 +1,8 @@
 package org.kif.reincarceration.util;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.config.ConfigManager;
@@ -10,7 +11,13 @@ public class BroadcastUtil {
 
     private static Reincarceration plugin;
     private static ConfigManager configManager;
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
+    /**
+     * Initializes the BroadcastUtil with the plugin instance.
+     *
+     * @param plugin The Reincarceration plugin instance
+     */
     public static void initialize(Reincarceration plugin) {
         BroadcastUtil.plugin = plugin;
         BroadcastUtil.configManager = plugin.getModuleManager().getConfigManager();
@@ -22,8 +29,8 @@ public class BroadcastUtil {
      * @param message The message to broadcast
      */
     public static void broadcastMessage(String message) {
-        String formattedMessage = formatMessage(message);
-        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(formattedMessage));
+        Component formattedMessage = formatMessage(message);
+        Bukkit.getServer().sendMessage(formattedMessage);
     }
 
     /**
@@ -33,10 +40,12 @@ public class BroadcastUtil {
      * @param permission The permission required to receive the broadcast
      */
     public static void broadcastMessageWithPermission(String message, String permission) {
-        String formattedMessage = formatMessage(message);
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> player.hasPermission(permission))
-                .forEach(player -> player.sendMessage(formattedMessage));
+        Component formattedMessage = formatMessage(message);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (player.hasPermission(permission)) {
+                player.sendMessage(formattedMessage);
+            }
+        }
     }
 
     /**
@@ -46,20 +55,23 @@ public class BroadcastUtil {
      * @param excludedPlayer The player to exclude from the broadcast
      */
     public static void broadcastMessageExcept(String message, Player excludedPlayer) {
-        String formattedMessage = formatMessage(message);
-        Bukkit.getOnlinePlayers().stream()
-                .filter(player -> !player.equals(excludedPlayer))
-                .forEach(player -> player.sendMessage(formattedMessage));
+        Component formattedMessage = formatMessage(message);
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            if (!player.equals(excludedPlayer)) {
+                player.sendMessage(formattedMessage);
+            }
+        }
     }
 
     /**
-     * Formats the message with the prefix and color codes.
+     * Formats the message with the prefix and parses MiniMessage format.
      *
      * @param message The message to format
-     * @return The formatted message
+     * @return The formatted message as a Component
      */
-    private static String formatMessage(String message) {
-        String prefix = configManager.getPrefix();
-        return ChatColor.translateAlternateColorCodes('&', prefix + message);
+    private static Component formatMessage(String message) {
+        Component prefix = configManager.getPrefix();
+        Component messageComponent = miniMessage.deserialize(message);
+        return Component.empty().append(prefix).append(Component.space()).append(messageComponent);
     }
 }

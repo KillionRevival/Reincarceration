@@ -33,15 +33,13 @@ public class RankUpCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(configManager.getPrefix() + "This command can only be used by players.");
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("reincarceration.rankup")) {
-            MessageUtil.sendPrefixMessage(player, "&cInsufficent Permissions");
+            MessageUtil.sendPrefixMessage(player, "<red>Insufficent Permissions");
             ConsoleUtil.sendError("Player " + player.getName() + " does not have permission to use /rankup but could execute command. Review permissions to ensure they are correct.");
             return true;
         }

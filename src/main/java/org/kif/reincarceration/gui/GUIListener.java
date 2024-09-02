@@ -2,34 +2,34 @@ package org.kif.reincarceration.gui;
 
 import me.gypopo.economyshopgui.api.events.PostTransactionEvent;
 import me.gypopo.economyshopgui.api.events.PreTransactionEvent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.core.CoreModule;
 import org.kif.reincarceration.cycle.CycleManager;
 import org.kif.reincarceration.cycle.CycleModule;
-import org.kif.reincarceration.data.DataModule;
 import org.kif.reincarceration.modifier.core.IModifier;
 import org.kif.reincarceration.modifier.core.ModifierManager;
 import org.kif.reincarceration.modifier.core.ModifierModule;
 import org.kif.reincarceration.rank.RankManager;
 import org.kif.reincarceration.config.ConfigManager;
 import org.kif.reincarceration.rank.RankModule;
-import org.kif.reincarceration.util.MessageUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
+import java.util.logging.Level;
 
 public class GUIListener implements Listener {
     private final Reincarceration plugin;
@@ -38,46 +38,28 @@ public class GUIListener implements Listener {
     private final RankManager rankManager;
     private final ModifierManager modifierManager;
     private final ConfigManager configManager;
+    private static final PlainTextComponentSerializer plainSerializer = PlainTextComponentSerializer.plainText();
 
     public GUIListener(Reincarceration plugin) {
         this.plugin = plugin;
-        GUIModule guiModule = plugin.getModuleManager().getModule(GUIModule.class);
-        CoreModule coreModule = plugin.getModuleManager().getModule(CoreModule.class);
-        CycleModule cycleModule = plugin.getModuleManager().getModule(CycleModule.class);
-        RankModule rankModule = plugin.getModuleManager().getModule(RankModule.class);
-        ModifierModule modifierModule = plugin.getModuleManager().getModule(ModifierModule.class);
-
-        if (coreModule == null || cycleModule == null || rankModule == null || modifierModule == null) {
-            throw new IllegalStateException("Required modules are not initialized");
-        }
-
-        this.guiManager = guiModule.getGuiManager();
-        this.cycleManager = cycleModule.getCycleManager();
-        this.rankManager = rankModule.getRankManager();
-        this.modifierManager = modifierModule.getModifierManager();
-        this.configManager = coreModule.getConfigManager();
+        this.guiManager = plugin.getModuleManager().getModule(GUIModule.class).getGuiManager();
+        this.cycleManager = plugin.getModuleManager().getModule(CycleModule.class).getCycleManager();
+        this.rankManager = plugin.getModuleManager().getModule(RankModule.class).getRankManager();
+        this.modifierManager = plugin.getModuleManager().getModule(ModifierModule.class).getModifierManager();
+        this.configManager = plugin.getModuleManager().getModule(CoreModule.class).getConfigManager();
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof Player))
+        if (!(event.getWhoClicked() instanceof Player player))
             return;
-        Player player = (Player) event.getWhoClicked();
-        String title = event.getView().getTitle();
+
+        String title = plainSerializer.serialize(event.getView().title());
 
         // Cancel all events in our custom GUIs
-        if (title.contains("Reincarceration") ||
-                title.contains("Player Info") ||
-                title.contains("Start Cycle") ||
-                title.contains("Rank Up") ||
-                title.contains("Modifier List") ||
-                title.contains("Available Modifiers") ||
-                title.contains("Completed Modifiers") ||
-                title.contains("Online Players") ||
-                title.contains("Quit Cycle") ||
-                title.contains("Complete Cycle") ||
-                title.contains("Warning: Start Cycle") ||
-                title.contains("Cycle Rewards")) {
+        if (title.contains("Reincarceration") || title.contains("Cycle") ||
+                title.contains("Modifier") || title.contains("Player") ||
+                title.contains("Rank Up") || title.contains("Warning")) {
             event.setCancelled(true);
 
             // Prevent any item movement, even within the inventory
@@ -90,143 +72,109 @@ public class GUIListener implements Listener {
         if (event.getCurrentItem() == null)
             return;
 
-        if (title.startsWith(ChatColor.DARK_PURPLE + "Reincarceration Menu")) {
-            handleMainMenu(player, event);
-        } else if (title.startsWith(ChatColor.GOLD + "Player Info")) {
-            handlePlayerInfoMenu(player, event);
-        } else if (title.startsWith(ChatColor.AQUA + "Start Cycle")) {
-            handleStartCycleMenu(player, event);
-        } else if (title.startsWith(ChatColor.GREEN + "Rank Up")) {
-            handleRankUpMenu(player, event);
-        } else if (title.startsWith(ChatColor.AQUA + "Available Modifiers")) {
-            handleAvailableModifiersMenu(player, event);
-        } else if (title.startsWith(ChatColor.GOLD + "Completed Modifiers")) {
-            handleCompletedModifiersMenu(player, event);
-        } else if (title.startsWith(ChatColor.BLUE + "Online Players")) {
-            handleOnlinePlayersMenu(player, event);
-        } else if (title.startsWith(ChatColor.RED + "Complete Cycle")) {
-            handleCompleteCycleMenu(player, event);
-        } else if (title.startsWith(ChatColor.RED + "Quit Cycle")) {
-            handleQuitCycleMenu(player, event);
-        } else if (title.startsWith(ChatColor.RED + "Warning: Start Cycle")) {
-            handleStartCycleWarningMenu(player, event);
-        } else if (title.startsWith(ChatColor.GOLD + "Cycle Rewards")) {
-            handleRewardsMenu(player, event);
+        try {
+            switch (title) {
+                case "Reincarceration Menu" -> handleMainMenu(player, event);
+                case "Player Info" -> handlePlayerInfoMenu(player, event);
+                case "Rank Up" -> handleRankUpMenu(player, event);
+                case "Complete Cycle" -> handleCompleteCycleMenu(player, event);
+                case "Quit Cycle" -> handleQuitCycleMenu(player, event);
+                case "Warning: Start Cycle" -> handleStartCycleWarningMenu(player, event);
+                case "Cycle Rewards" -> handleRewardsMenu(player, event);
+                default -> {
+                    if (title.startsWith("Start Cycle")) handleStartCycleMenu(player, event);
+                    else if (title.startsWith("Available Modifiers")) handleAvailableModifiersMenu(player, event);
+                    else if (title.startsWith("Completed Modifiers")) handleCompletedModifiersMenu(player, event);
+                    else if (title.startsWith("Online Players")) handleOnlinePlayersMenu(player, event);
+                }
+            }
+        } catch (Exception e) {
+            player.sendMessage(Component.text("An error occurred while processing your request.", NamedTextColor.RED));
+            plugin.getLogger().log(Level.SEVERE, "Error in GUI interaction", e);
         }
     }
 
     private void handleMainMenu(Player player, InventoryClickEvent event) {
-        if (event.getCurrentItem().getType() == Material.BARRIER) {
-            // Do nothing for disabled items
-            return;
-        }
+        if (Objects.requireNonNull(event.getCurrentItem()).getType() == Material.BARRIER) return;
 
         switch (event.getCurrentItem().getType()) {
-            case BOOK:
-                guiManager.openPlayerInfoGUI(player);
-                break;
-            case IRON_BARS:
-                guiManager.openStartCycleGUI(player, 0);
-                break;
-            case EMERALD:
-                guiManager.openRankUpGUI(player);
-                break;
-            case CARTOGRAPHY_TABLE:
-                guiManager.openAvailableModifiersGUI(player, 0);
-                break;
-            case PLAYER_HEAD:
-                guiManager.openOnlinePlayersGUI(player, 0);
-                break;
-            case END_CRYSTAL:
-                guiManager.openCompleteCycleGUI(player);
-                break;
-            case LEAD:
+            case BOOK -> guiManager.openPlayerInfoGUI(player);
+            case IRON_BARS -> guiManager.openStartCycleGUI(player, 0);
+            case EMERALD -> guiManager.openRankUpGUI(player);
+            case CARTOGRAPHY_TABLE -> guiManager.openAvailableModifiersGUI(player, 0);
+            case PLAYER_HEAD -> guiManager.openOnlinePlayersGUI(player, 0);
+            case END_CRYSTAL -> guiManager.openCompleteCycleGUI(player);
+            case LEAD -> {
                 if (cycleManager.isPlayerInCycle(player)) {
                     guiManager.openQuitCycleGUI(player);
                 }
-                break;
+            }
         }
     }
 
     private void handlePlayerInfoMenu(Player player, InventoryClickEvent event) {
-        if (event.getCurrentItem().getType() == Material.RED_WOOL) {
+        if (Objects.requireNonNull(event.getCurrentItem()).getType() == Material.RED_WOOL) {
             guiManager.openMainMenu(player);
         }
     }
 
     private void handleStartCycleMenu(Player player, InventoryClickEvent event) {
-        if (handleNavigationButtons(player, event, event.getView().getTitle()))
-            return;
+        if (handleNavigationButtons(player, event)) return;
 
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem != null && clickedItem.getType() != Material.AIR) {
             if (clickedItem.getType() == Material.RABBIT_FOOT) {
-                // Random Challenge selected
-                IModifier randomModifier = createRandomModifier();
-                guiManager.openStartCycleWarningGUI(player, randomModifier);
-            } else if (event.isRightClick()) {
-                String modifierName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
-                try {
-                    IModifier modifier = modifierManager.getModifierByName(modifierName);
-                    if (modifier != null) {
-                        guiManager.openRewardItemGUI(player, modifier);
-                    }
-                } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error selecting modifier: " + e.getMessage());
-                }
+                guiManager.openStartCycleWarningGUI(player, createRandomModifier());
             } else {
-                String modifierName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
+                String modifierName = getItemName(clickedItem);
                 try {
                     IModifier modifier = modifierManager.getModifierByName(modifierName);
                     if (modifier != null) {
-                        guiManager.openStartCycleWarningGUI(player, modifier);
+                        if (event.isRightClick()) {
+                            guiManager.openRewardItemGUI(player, modifier);
+                        } else {
+                            guiManager.openStartCycleWarningGUI(player, modifier);
+                        }
                     }
                 } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error selecting modifier: " + e.getMessage());
+                    player.sendMessage(Component.text("Error selecting modifier: " + e.getMessage(), NamedTextColor.RED));
+                    plugin.getLogger().log(Level.WARNING, "Error selecting modifier", e);
                 }
             }
         }
     }
 
     private void handleRewardsMenu(Player player, InventoryClickEvent event) {
-        ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null)
-            return;
-        if (clickedItem.getType() != Material.REDSTONE_BLOCK)
-            return;
-        guiManager.openMainMenu(player);
+        if (event.getCurrentItem().getType() == Material.REDSTONE_BLOCK) {
+            guiManager.openMainMenu(player);
+        }
     }
 
     private void handleStartCycleWarningMenu(Player player, InventoryClickEvent event) {
         ItemStack clickedItem = event.getCurrentItem();
-        if (clickedItem == null)
-            return;
+        if (clickedItem == null) return;
 
         if (clickedItem.getType() == Material.EMERALD_BLOCK) {
-            // Confirm start cycle
             ItemStack modifierItem = event.getInventory().getItem(13);
             if (modifierItem != null && modifierItem.hasItemMeta() && modifierItem.getItemMeta().hasLore()) {
-                String modifierName = ChatColor.stripColor(modifierItem.getItemMeta().getLore().get(2));
-                modifierName = modifierName.substring(modifierName.lastIndexOf(":") + 2);
-                try {
-                    IModifier modifier;
-                    if ("Random Challenge".equals(modifierName)) {
-                        // Use the placeholder random modifier
-                        modifier = createRandomModifier();
-                    } else {
-                        modifier = modifierManager.getModifierByName(modifierName);
+                List<Component> lore = modifierItem.getItemMeta().lore();
+                if (lore != null && lore.size() > 2) {
+                    String modifierName = plainSerializer.serialize(lore.get(2));
+                    modifierName = modifierName.substring(modifierName.lastIndexOf(":") + 2);
+                    try {
+                        IModifier modifier = "Random Challenge".equals(modifierName) ?
+                                createRandomModifier() : modifierManager.getModifierByName(modifierName);
+                        if (modifier != null) {
+                            cycleManager.startNewCycle(player, modifier);
+                            player.closeInventory();
+                        }
+                    } catch (Exception e) {
+                        player.sendMessage(Component.text("Error starting cycle: " + e.getMessage(), NamedTextColor.RED));
+                        plugin.getLogger().log(Level.WARNING, "Error starting cycle", e);
                     }
-
-                    if (modifier != null) {
-                        cycleManager.startNewCycle(player, modifier);
-                        player.closeInventory();
-                    }
-                } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error starting cycle: " + e.getMessage());
                 }
             }
         } else if (clickedItem.getType() == Material.REDSTONE_BLOCK) {
-            // Cancel and return to main menu
             guiManager.openMainMenu(player);
         }
     }
@@ -239,35 +187,30 @@ public class GUIListener implements Listener {
                 if (rankManager.canRankUp(player)) {
                     rankManager.rankUp(player);
                     player.closeInventory();
-                    player.sendMessage(ChatColor.GREEN + "You've successfully ranked up!");
-                    guiManager.openRankUpGUI(player); // Reopen the GUI to show updated info
+                    player.sendMessage(Component.text("You've successfully ranked up!", NamedTextColor.GREEN));
+                    guiManager.openRankUpGUI(player);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You can't rank up right now.");
+                    player.sendMessage(Component.text("You can't rank up right now.", NamedTextColor.RED));
                 }
             } catch (Exception e) {
-                player.sendMessage(ChatColor.RED + "Error ranking up: " + e.getMessage());
+                player.sendMessage(Component.text("Error ranking up: " + e.getMessage(), NamedTextColor.RED));
+                plugin.getLogger().log(Level.WARNING, "Error ranking up player", e);
             }
         }
     }
 
-    private void handleModifierListMenu(Player player, InventoryClickEvent event) {
-        handleNavigationButtons(player, event, event.getView().getTitle());
-    }
-
     private void handleQuitCycleMenu(Player player, InventoryClickEvent event) {
         switch (event.getCurrentItem().getType()) {
-            case EMERALD_BLOCK:
+            case EMERALD_BLOCK -> {
                 cycleManager.quitCycle(player);
                 player.closeInventory();
-                break;
-            case REDSTONE_BLOCK:
-                guiManager.openMainMenu(player);
-                break;
+            }
+            case REDSTONE_BLOCK -> guiManager.openMainMenu(player);
         }
     }
 
     private void handleOnlinePlayersMenu(Player player, InventoryClickEvent event) {
-        handleNavigationButtons(player, event, event.getView().getTitle());
+        handleNavigationButtons(player, event);
     }
 
     private void handleCompleteCycleMenu(Player player, InventoryClickEvent event) {
@@ -275,40 +218,39 @@ public class GUIListener implements Listener {
             guiManager.openMainMenu(player);
         } else if (event.getCurrentItem().getType() == Material.EMERALD_BLOCK) {
             try {
-                if (cycleManager.isPlayerInCycle(player)
-                        && configManager.isMaxRank(rankManager.getPlayerRank(player))) {
+                if (cycleManager.isPlayerInCycle(player) && configManager.isMaxRank(rankManager.getPlayerRank(player))) {
                     cycleManager.completeCycle(player);
                     player.closeInventory();
-                    player.sendMessage(ChatColor.GREEN + "You've successfully completed your cycle!");
+                    player.sendMessage(Component.text("You've successfully completed your cycle!", NamedTextColor.GREEN));
                     guiManager.openMainMenu(player);
                 } else {
-                    player.sendMessage(ChatColor.RED + "You can't complete the cycle right now.");
+                    player.sendMessage(Component.text("You can't complete the cycle right now.", NamedTextColor.RED));
                 }
             } catch (Exception e) {
-                player.sendMessage(ChatColor.RED + "Error completing cycle: " + e.getMessage());
-                e.printStackTrace();
+                player.sendMessage(Component.text("Error completing cycle: " + e.getMessage(), NamedTextColor.RED));
+                plugin.getLogger().log(Level.WARNING, "Error completing cycle", e);
             }
         }
     }
 
     private void handleAvailableModifiersMenu(Player player, InventoryClickEvent event) {
-        if (event.getCurrentItem() == null)
-            return;
+        if (event.getCurrentItem() == null) return;
 
         if (event.getCurrentItem().getType() == Material.BOOK) {
             guiManager.openCompletedModifiersGUI(player, 0);
         } else if (event.isRightClick()) {
-            String modifierName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName());
+            String modifierName = getItemName(event.getCurrentItem());
             try {
                 IModifier modifier = modifierManager.getModifierByName(modifierName);
                 if (modifier != null) {
                     guiManager.openRewardItemGUI(player, modifier);
                 }
             } catch (Exception e) {
-                player.sendMessage(ChatColor.RED + "Error selecting modifier: " + e.getMessage());
+                player.sendMessage(Component.text("Error selecting modifier: " + e.getMessage(), NamedTextColor.RED));
+                plugin.getLogger().log(Level.WARNING, "Error selecting modifier", e);
             }
         } else {
-            handleNavigationButtons(player, event, event.getView().getTitle());
+            handleNavigationButtons(player, event);
         }
     }
 
@@ -316,24 +258,25 @@ public class GUIListener implements Listener {
         if (event.getCurrentItem().getType() == Material.CARTOGRAPHY_TABLE) {
             guiManager.openAvailableModifiersGUI(player, 0);
         } else {
-            handleNavigationButtons(player, event, event.getView().getTitle());
+            handleNavigationButtons(player, event);
         }
     }
 
-    private boolean handleNavigationButtons(Player player, InventoryClickEvent event, String guiName) {
+    private boolean handleNavigationButtons(Player player, InventoryClickEvent event) {
+        String title = plainSerializer.serialize(event.getView().title());
         if (event.getCurrentItem().getType() == Material.RED_WOOL) {
             guiManager.openMainMenu(player);
             return true;
         } else if (event.getCurrentItem().getType() == Material.ARROW) {
-            String pageStr = guiName.substring(guiName.lastIndexOf("Page ") + 5, guiName.length() - 1);
+            String pageStr = title.substring(title.lastIndexOf("Page ") + 5, title.length() - 1);
             int currentPage = Integer.parseInt(pageStr) - 1;
 
-            if (event.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.GREEN + "Next Page")) {
-                openNextPage(player, guiName, currentPage);
+            String buttonName = getItemName(event.getCurrentItem());
+            if ("Next Page".equals(buttonName)) {
+                openNextPage(player, title, currentPage);
                 return true;
-            } else if (event.getCurrentItem().getItemMeta().getDisplayName()
-                    .equals(ChatColor.GREEN + "Previous Page")) {
-                openPreviousPage(player, guiName, currentPage);
+            } else if ("Previous Page".equals(buttonName)) {
+                openPreviousPage(player, title, currentPage);
                 return true;
             }
         }
@@ -341,25 +284,25 @@ public class GUIListener implements Listener {
     }
 
     private void openNextPage(Player player, String guiName, int currentPage) {
-        if (guiName.startsWith(ChatColor.AQUA + "Start Cycle")) {
+        if (guiName.startsWith("Start Cycle")) {
             guiManager.openStartCycleGUI(player, currentPage + 1);
-        } else if (guiName.startsWith(ChatColor.AQUA + "Available Modifiers")) {
+        } else if (guiName.startsWith("Available Modifiers")) {
             guiManager.openAvailableModifiersGUI(player, currentPage + 1);
-        } else if (guiName.startsWith(ChatColor.GOLD + "Completed Modifiers")) {
+        } else if (guiName.startsWith("Completed Modifiers")) {
             guiManager.openCompletedModifiersGUI(player, currentPage + 1);
-        } else if (guiName.startsWith(ChatColor.BLUE + "Online Players")) {
+        } else if (guiName.startsWith("Online Players")) {
             guiManager.openOnlinePlayersGUI(player, currentPage + 1);
         }
     }
 
     private void openPreviousPage(Player player, String guiName, int currentPage) {
-        if (guiName.startsWith(ChatColor.AQUA + "Start Cycle")) {
+        if (guiName.startsWith("Start Cycle")) {
             guiManager.openStartCycleGUI(player, currentPage - 1);
-        } else if (guiName.startsWith(ChatColor.AQUA + "Available Modifiers")) {
+        } else if (guiName.startsWith("Available Modifiers")) {
             guiManager.openAvailableModifiersGUI(player, currentPage - 1);
-        } else if (guiName.startsWith(ChatColor.GOLD + "Completed Modifiers")) {
+        } else if (guiName.startsWith("Completed Modifiers")) {
             guiManager.openCompletedModifiersGUI(player, currentPage - 1);
-        } else if (guiName.startsWith(ChatColor.BLUE + "Online Players")) {
+        } else if (guiName.startsWith("Online Players")) {
             guiManager.openOnlinePlayersGUI(player, currentPage - 1);
         }
     }
@@ -441,5 +384,15 @@ public class GUIListener implements Listener {
             // public boolean handleFishing(PlayerFishEvent event) { return false; }
             // Add any other methods required by your IModifier interface
         };
+    }
+
+    private String getItemName(ItemStack item) {
+        if (item != null && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta.hasDisplayName()) {
+                return plainSerializer.serialize(Objects.requireNonNull(meta.displayName()));
+            }
+        }
+        return "";
     }
 }

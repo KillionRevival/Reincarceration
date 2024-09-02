@@ -66,7 +66,7 @@ public class GUICommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("reincarceration.gui")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
@@ -75,11 +75,11 @@ public class GUICommand implements CommandExecutor {
                 guiModule.getGuiManager().openMainMenu(player);
                 ConsoleUtil.sendInfo("Player " + player.getName() + " opened the Reincarceration GUI.");
             } else {
-                MessageUtil.sendPrefixMessage(player, "&cGUI system is currently unavailable.");
+                MessageUtil.sendPrefixMessage(player, "<red>GUI system is currently unavailable.");
                 ConsoleUtil.sendError("GUI Module is null when player " + player.getName() + " tried to open the GUI.");
             }
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while trying to open the GUI.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while trying to open the GUI.");
             ConsoleUtil.sendError("Error in GUICommand: " + e.getMessage());
             commandModule.getPlugin().getLogger().log(Level.SEVERE, "Error in GUICommand", e);
         }

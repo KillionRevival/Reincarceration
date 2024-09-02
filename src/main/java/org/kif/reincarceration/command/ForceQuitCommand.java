@@ -47,33 +47,33 @@ public class ForceQuitCommand implements CommandExecutor {
         }
 
         if (!player.hasPermission("reincarceration.admin.forcequit") && !player.hasPermission("reincarceration.admin")) {
-            MessageUtil.sendPrefixMessage(player, "&cYou don't have permission to use this command.");
+            MessageUtil.sendPrefixMessage(player, "<red>You don't have permission to use this command.");
             return true;
         }
 
         if (args.length != 1) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /forcequit <player>");
+            MessageUtil.sendPrefixMessage(player, "<red>Usage: /forcequit <player>");
             return true;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
         if (targetPlayer == null) {
-            MessageUtil.sendPrefixMessage(player, "&cPlayer not found or not online.");
+            MessageUtil.sendPrefixMessage(player, "<red>Player not found or not online.");
             return true;
         }
 
         try {
             if (!cycleManager.isPlayerInCycle(targetPlayer)) {
-                MessageUtil.sendPrefixMessage(player, "&cThe specified player is not currently in a cycle.");
+                MessageUtil.sendPrefixMessage(player, "<red>The specified player is not currently in a cycle.");
                 return true;
             }
 
             cycleManager.quitCycle(targetPlayer);
-            MessageUtil.sendPrefixMessage(player, "&aYou have forcefully removed " + targetPlayer.getName() + " from their cycle.");
-            MessageUtil.sendPrefixMessage(targetPlayer, "&cAn admin has forcefully removed you from your cycle.");
+            MessageUtil.sendPrefixMessage(player, "<green>You have forcefully removed " + targetPlayer.getName() + " from their cycle.");
+            MessageUtil.sendPrefixMessage(targetPlayer, "<red>An admin has forcefully removed you from your cycle.");
             ConsoleUtil.sendInfo("Admin " + player.getName() + " forcefully removed " + targetPlayer.getName() + " from their cycle.");
         } catch (Exception e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while trying to force quit the player's cycle.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while trying to force quit the player's cycle.");
             ConsoleUtil.sendError("Error in ForceQuitCommand: " + e.getMessage());
             cycleModule.getPlugin().getLogger().log(Level.SEVERE, "Error in ForceQuitCommand", e);
         }

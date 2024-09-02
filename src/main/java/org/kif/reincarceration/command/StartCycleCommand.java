@@ -35,26 +35,24 @@ public class StartCycleCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(configManager.getPrefix() + "This command can only be used by players.");
             return true;
         }
 
-        Player player = (Player) sender;
-
         if (!player.hasPermission("reincarceration.startcycle")) {
-            MessageUtil.sendPrefixMessage(player, "&cInsufficent Permissions");
+            MessageUtil.sendPrefixMessage(player, "<red>Insufficent Permissions");
             return true;
         }
 
         if (cycleManager.isPlayerInCycle(player)) {
-            MessageUtil.sendPrefixMessage(player, "&cInvalid: Cycle Presence");
+            MessageUtil.sendPrefixMessage(player, "<red>Invalid: Cycle Presence");
             ConsoleUtil.sendError("Player " + player.getName() + " is already in a cycle but has permissions! Review permissions!");
             return true;
         }
 
         if (args.length < 1) {
-            MessageUtil.sendPrefixMessage(player, "&cUsage: /startcycle <modifier>");
+            MessageUtil.sendPrefixMessage(player, "<red>Usage: /startcycle <modifier>");
             return true;
         }
 
@@ -62,20 +60,20 @@ public class StartCycleCommand implements CommandExecutor {
         IModifier modifier = modifierRegistry.getModifier(modifierId);
 
         if (modifier == null) {
-            MessageUtil.sendPrefixMessage(player, "&cInvalid modifier. Use /listmodifiers to see available modifiers.");
+            MessageUtil.sendPrefixMessage(player, "<red>Invalid modifier. Use /listmodifiers to see available modifiers.");
             return true;
         }
 
         try {
             if (!modifierManager.canUseModifier(player, modifier)) {
-                MessageUtil.sendPrefixMessage(player, "&cYou have already completed this modifier. Choose a different one.");
+                MessageUtil.sendPrefixMessage(player, "<red>You have already completed this modifier. Choose a different one.");
                 return true;
             }
 
             cycleManager.startNewCycle(player, modifier);
 
         } catch (SQLException e) {
-            MessageUtil.sendPrefixMessage(player, "&cAn error occurred while starting the cycle. Please try again later.");
+            MessageUtil.sendPrefixMessage(player, "<red>An error occurred while starting the cycle. Please try again later.");
             commandModule.getPlugin().getLogger().severe("Error in StartCycleCommand: " + e.getMessage());
         }
 

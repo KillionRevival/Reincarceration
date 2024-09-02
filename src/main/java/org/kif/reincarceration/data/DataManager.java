@@ -166,6 +166,15 @@ public class DataManager {
         }
     }
 
+    public void decrementPlayerCycleCount(Player player) throws SQLException {
+        String sql = "UPDATE player_data SET cycle_count = cycle_count - 1 WHERE uuid = ? AND cycle_count > 0";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, player.getUniqueId().toString());
+            pstmt.executeUpdate();
+        }
+    }
+
     public BigDecimal getStoredBalance(UUID uuid) throws SQLException {
         String sql = "SELECT stored_balance FROM player_data WHERE uuid = ?";
         try (Connection conn = dataModule.getConnection();
@@ -433,6 +442,43 @@ public class DataManager {
     private void clearActiveModifiersTable(Player player) throws SQLException {
         String sql = "DELETE FROM active_modifiers WHERE player_uuid = ?";
         executeDelete(sql, player, "active_modifiers");
+    }
+
+    public void undoRecordCycleCompletion(Player player) throws SQLException {
+        String sql = "UPDATE cycle_history SET end_time = NULL, completed = FALSE " +
+                "WHERE player_uuid = ? AND end_time = (SELECT MAX(end_time) FROM cycle_history WHERE player_uuid = ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, player.getUniqueId().toString());
+            pstmt.setString(2, player.getUniqueId().toString());
+            int updatedRows = pstmt.executeUpdate();
+            if (updatedRows == 0) {
+                ConsoleUtil.sendDebug("No cycle completion record found to undo for player: " + player.getName());
+            } else {
+                ConsoleUtil.sendDebug("Undid cycle completion record for player: " + player.getName());
+            }
+        } catch (SQLException e) {
+            ConsoleUtil.sendError("Error undoing cycle completion record: " + e.getMessage());
+            throw e;
+        }
+    }
+
+    public void removeCompletedModifier(Player player, String modifierId) throws SQLException {
+        String sql = "DELETE FROM completed_modifiers WHERE player_uuid = ? AND modifier_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, player.getUniqueId().toString());
+            pstmt.setString(2, modifierId);
+            int deletedRows = pstmt.executeUpdate();
+            if (deletedRows == 0) {
+                ConsoleUtil.sendDebug("No completed modifier record found to remove for player: " + player.getName() + ", modifier: " + modifierId);
+            } else {
+                ConsoleUtil.sendDebug("Removed completed modifier record for player: " + player.getName() + ", modifier: " + modifierId);
+            }
+        } catch (SQLException e) {
+            ConsoleUtil.sendError("Error removing completed modifier record: " + e.getMessage());
+            throw e;
+        }
     }
 
     private void executeDelete(String sql, Player player, String tableName) throws SQLException {
