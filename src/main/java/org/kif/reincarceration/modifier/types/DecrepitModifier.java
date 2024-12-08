@@ -39,7 +39,7 @@ public class DecrepitModifier extends AbstractModifier implements Listener {
     }
 
     private void setMaxHealth(Player player) {
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute != null) {
             double oldValue = attribute.getBaseValue();
             attribute.setBaseValue(maxHearts * 2); // Each heart is 2 health points
@@ -51,7 +51,7 @@ public class DecrepitModifier extends AbstractModifier implements Listener {
     }
 
     private void resetMaxHealth(Player player) {
-        AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        AttributeInstance attribute = player.getAttribute(Attribute.MAX_HEALTH);
         if (attribute != null) {
             double oldValue = attribute.getBaseValue();
             attribute.setBaseValue(20); // Reset to default 10 hearts (20 health points)

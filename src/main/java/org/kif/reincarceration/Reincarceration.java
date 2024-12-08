@@ -1,5 +1,6 @@
 package org.kif.reincarceration;
 
+import co.killionrevival.killioncommons.util.TextFormatUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -145,8 +146,7 @@ public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
             moduleManager.disableAllModules();
         }
         if (prefix != null) {
-            console.sendMessage(
-                    ChatColor.translateAlternateColorCodes('&', prefix + "&2Reincarceration has been disabled!"));
+            console.sendMessage(TextFormatUtil.getComponentFromLegacyString(prefix + "&2Reincarceration has been disabled!"));
         } else {
             console.sendMessage(ChatColor.RED + "[Reincarceration] has been disabled!");
         }

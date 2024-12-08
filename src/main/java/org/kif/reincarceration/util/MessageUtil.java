@@ -1,6 +1,7 @@
 package org.kif.reincarceration.util;
 
-import org.bukkit.ChatColor;
+import co.killionrevival.killioncommons.util.TextFormatUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.config.ConfigManager;
@@ -16,21 +17,19 @@ public class MessageUtil {
     }
 
     public static void sendMessage(Player player, String message) {
-        String formattedMessage = formatMessage(message, false);
-        player.sendMessage(formattedMessage);
+        player.sendMessage(formatMessage(message, false));
     }
 
     public static void sendPrefixMessage(Player player, String message) {
-        String formattedMessage = formatMessage(message, true);
-        player.sendMessage(formattedMessage);
+        player.sendMessage(formatMessage(message, true));
     }
 
-    private static String formatMessage(String message, Boolean prefix_toggle) {
+    private static Component formatMessage(String message, Boolean prefix_toggle) {
         if (prefix_toggle) {
-            String prefix = configManager.getPrefix();
-            return ChatColor.translateAlternateColorCodes('&', prefix + message);
+            String prefix = configManager.getPrefix() + " ";
+            return TextFormatUtil.getComponentFromLegacyString(prefix + message);
         } else {
-            return ChatColor.translateAlternateColorCodes('&', message);
+            return TextFormatUtil.getComponentFromLegacyString(message);
         }
     }
 }

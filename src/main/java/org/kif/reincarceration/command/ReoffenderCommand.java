@@ -60,33 +60,33 @@ public class ReoffenderCommand implements CommandExecutor {
 
             MessageUtil.sendMessage(player, "&4--- Reincarceration Profile ---");
             if (inCycle) {
-                MessageUtil.sendMessage(player, "&4| §r&cCurrent Rank: " + rankName + " (Level " + currentRank + ")");
+                MessageUtil.sendMessage(player, "&4| &r&cCurrent Rank: " + rankName + " (Level " + currentRank + ")");
             }
-            MessageUtil.sendMessage(player, "&4| §r&cCurrent Balance: §r&c" + balance);
-            MessageUtil.sendMessage(player, "&4| §r&cStored Balance: §r&c" + storedBalance);
-            MessageUtil.sendMessage(player, "&4| §r&cTotal Completed Cycles: §r&c" + cycleCount);
-            MessageUtil.sendMessage(player, "&4| §r&cCurrently in Cycle: §r&c" + (inCycle ? "Yes" : "No"));
+            MessageUtil.sendMessage(player, "&4| &r&cCurrent Balance: &r&c" + balance);
+            MessageUtil.sendMessage(player, "&4| &r&cStored Balance: &r&c" + storedBalance);
+            MessageUtil.sendMessage(player, "&4| &r&cTotal Completed Cycles: &r&c" + cycleCount);
+            MessageUtil.sendMessage(player, "&4| &r&cCurrently in Cycle: &r&c" + (inCycle ? "Yes" : "No"));
 
             if (inCycle) {
                 if (currentRank < configManager.getRankUpCosts().size()) {
                     BigDecimal nextRankCost = configManager.getRankUpCost(currentRank);
-                    MessageUtil.sendMessage(player, "&4| §r&cCost to rank up: §r&c" + nextRankCost);
+                    MessageUtil.sendMessage(player, "&4| &r&cCost to rank up: &r&c" + nextRankCost);
 
                     if (economyManager.hasEnoughBalance(player, nextRankCost)) {
-                        MessageUtil.sendMessage(player, "&4| §r&cYou have enough money to rank up! Use §n/rankup§r&c to proceed.");
+                        MessageUtil.sendMessage(player, "&4| &r&cYou have enough money to rank up! Use &n/rankup&r&c to proceed.");
                     } else {
-                        MessageUtil.sendMessage(player, "&4| §r&cYou need " + nextRankCost.subtract(balance) + " more to rank up.");
+                        MessageUtil.sendMessage(player, "&4| &r&cYou need " + nextRankCost.subtract(balance) + " more to rank up.");
                     }
                 } else {
-                    MessageUtil.sendMessage(player, "&4| §r&cYou have reached the maximum rank! Use §n/completecycle to finish your cycle.");
+                    MessageUtil.sendMessage(player, "&4| &r&cYou have reached the maximum rank! Use &n/completecycle to finish your cycle.");
                 }
             } else {
                 BigDecimal entryFee = configManager.getEntryFee();
-                MessageUtil.sendMessage(player, "&4| §r&cEntry fee for new cycle: §r&c" + entryFee);
+                MessageUtil.sendMessage(player, "&4| &r&cEntry fee for new cycle: &r&c" + entryFee);
                 if (balance.compareTo(entryFee) >= 0) {
-                    MessageUtil.sendMessage(player, "&4| §r&cYou can start a new cycle with §n/startcycle");
+                    MessageUtil.sendMessage(player, "&4| &r&cYou can start a new cycle with &n/startcycle");
                 } else {
-                    MessageUtil.sendMessage(player, "&4| §r&cYou need " + entryFee.subtract(balance) + " more to start a new cycle.");
+                    MessageUtil.sendMessage(player, "&4| &r&cYou need " + entryFee.subtract(balance) + " more to start a new cycle.");
                 }
             }
         } catch (SQLException e) {

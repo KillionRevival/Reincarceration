@@ -1,5 +1,6 @@
 package org.kif.reincarceration.util;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -22,8 +23,7 @@ public class BroadcastUtil {
      * @param message The message to broadcast
      */
     public static void broadcastMessage(String message) {
-        String formattedMessage = formatMessage(message);
-        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(formattedMessage));
+        Bukkit.getOnlinePlayers().forEach(player -> MessageUtil.sendPrefixMessage(player, message));
     }
 
     /**
@@ -33,10 +33,9 @@ public class BroadcastUtil {
      * @param permission The permission required to receive the broadcast
      */
     public static void broadcastMessageWithPermission(String message, String permission) {
-        String formattedMessage = formatMessage(message);
-        Bukkit.getOnlinePlayers().stream()
+       Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.hasPermission(permission))
-                .forEach(player -> player.sendMessage(formattedMessage));
+                .forEach(player -> MessageUtil.sendPrefixMessage(player, message));
     }
 
     /**
@@ -46,20 +45,8 @@ public class BroadcastUtil {
      * @param excludedPlayer The player to exclude from the broadcast
      */
     public static void broadcastMessageExcept(String message, Player excludedPlayer) {
-        String formattedMessage = formatMessage(message);
         Bukkit.getOnlinePlayers().stream()
                 .filter(player -> !player.equals(excludedPlayer))
-                .forEach(player -> player.sendMessage(formattedMessage));
-    }
-
-    /**
-     * Formats the message with the prefix and color codes.
-     *
-     * @param message The message to format
-     * @return The formatted message
-     */
-    private static String formatMessage(String message) {
-        String prefix = configManager.getPrefix();
-        return ChatColor.translateAlternateColorCodes('&', prefix + message);
+                .forEach(player -> MessageUtil.sendPrefixMessage(player, message));
     }
 }

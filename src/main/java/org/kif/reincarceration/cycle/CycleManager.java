@@ -103,9 +103,9 @@ public class CycleManager {
                 }, 60L);
 
                 if (isRandomSelection) {
-                    BroadcastUtil.broadcastMessage("§c" + player.getName() + " randomly admitted with the " + modifier.getName() + " modifier");
+                    BroadcastUtil.broadcastMessage("&c" + player.getName() + " randomly admitted with the " + modifier.getName() + " modifier");
                 } else {
-                    BroadcastUtil.broadcastMessage("§c" + player.getName() + " admitted with the " + modifier.getName() + " modifier");
+                    BroadcastUtil.broadcastMessage("&c" + player.getName() + " admitted with the " + modifier.getName() + " modifier");
                 }
             } catch (SQLException e) {
                 logSevere("Error starting new cycle: " + e.getMessage());
@@ -173,7 +173,7 @@ public class CycleManager {
             player.setHealth(0.0);
             VaultUtil.ensureVaultCleared(player.getUniqueId().toString(), 3);
 
-            BroadcastUtil.broadcastMessage("§c" + player.getName() + " completed the cycle with the "
+            BroadcastUtil.broadcastMessage("&c" + player.getName() + " completed the cycle with the "
                     + activeModifier.getName() + " modifier");
 
         } catch (SQLException e) {
@@ -220,7 +220,7 @@ public class CycleManager {
             VaultUtil.ensureVaultCleared(player.getUniqueId().toString(), 3);
 
             BroadcastUtil.broadcastMessage(
-                    "§c" + player.getName() + " has been discharged as a result of their inability to overcome the "
+                    "&c" + player.getName() + " has been discharged as a result of their inability to overcome the "
                             + activeModifier.getName() + " modifier");
 
         } catch (SQLException e) {

@@ -223,9 +223,9 @@ public class LumberjackModifier extends AbstractModifier implements Listener {
         wolf.setAngry(true);
         wolf.setTarget(target);
         wolf.setAware(true);
-        Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_FOLLOW_RANGE)).setBaseValue(100); // Increase follow range
-        Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(0.4); // Increase speed
-        Objects.requireNonNull(wolf.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)).setBaseValue(4); // Set attack damage
+        Objects.requireNonNull(wolf.getAttribute(Attribute.FOLLOW_RANGE)).setBaseValue(100); // Increase follow range
+        Objects.requireNonNull(wolf.getAttribute(Attribute.MOVEMENT_SPEED)).setBaseValue(0.4); // Increase speed
+        Objects.requireNonNull(wolf.getAttribute(Attribute.ATTACK_DAMAGE)).setBaseValue(4); // Set attack damage
     }
 
 //    public boolean handlePreTransaction(PreTransactionEvent event) {

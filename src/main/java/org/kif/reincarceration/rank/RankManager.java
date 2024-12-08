@@ -68,7 +68,7 @@ public class RankManager {
                 int newRank = currentRank + 1;
                 setPlayerRank(player, newRank);
 
-                BroadcastUtil.broadcastMessage("§c" + player.getName() + " has ranked up to " + configManager.getRankName(newRank));
+                BroadcastUtil.broadcastMessage("&c" + player.getName() + " has ranked up to " + configManager.getRankName(newRank));
 
             } catch (SQLException e) {
                 plugin.getLogger().severe("Error updating player rank: " + e.getMessage());

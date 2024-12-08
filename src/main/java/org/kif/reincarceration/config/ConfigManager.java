@@ -1,5 +1,7 @@
 package org.kif.reincarceration.config;
 
+import co.killionrevival.killioncommons.util.TextFormatUtil;
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -53,7 +55,7 @@ public class ConfigManager {
     }
 
     public String getPrefix() {
-        return ChatColor.translateAlternateColorCodes('&', config.getString("prefix", "&8[&6Reincarceration&8] &r"));
+        return config.getString("prefix", "&8[&6Reincarceration&8] &r");
     }
 
     public boolean isDebugMode() {

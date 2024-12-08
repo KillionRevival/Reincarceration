@@ -430,7 +430,7 @@ public class GUIManager {
 
     private ItemStack createEnchantedGuiItem(Material material, String name, String... lore) {
         ItemStack item = createGuiItem(material, name, lore);
-        item.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        item.addUnsafeEnchantment(Enchantment.FORTUNE, 1);
         ItemMeta meta = item.getItemMeta();
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         item.setItemMeta(meta);
@@ -457,7 +457,7 @@ public class GUIManager {
                 line = new StringBuilder();
             }
             // Check if the word contains a color code
-            if (word.matches("§[0-9a-fk-or]")) {
+            if (word.matches("&[0-9a-fk-or]")) {
                 colorCode = word;
             }
             line.append(word).append(" ");

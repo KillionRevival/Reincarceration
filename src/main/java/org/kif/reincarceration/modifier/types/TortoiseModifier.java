@@ -61,15 +61,15 @@ public class TortoiseModifier extends AbstractModifier implements Listener {
     }
 
     private void applyEffects(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, slownessLevel - 1, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, resistanceLevel - 1, false, false));
-        player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, miningHasteLevel - 1, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, Integer.MAX_VALUE, slownessLevel - 1, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.RESISTANCE, Integer.MAX_VALUE, resistanceLevel - 1, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, Integer.MAX_VALUE, miningHasteLevel - 1, false, false));
     }
 
     private void removeEffects(Player player) {
-        player.removePotionEffect(PotionEffectType.SLOW);
-        player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
-        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+        player.removePotionEffect(PotionEffectType.SLOWNESS);
+        player.removePotionEffect(PotionEffectType.RESISTANCE);
+        player.removePotionEffect(PotionEffectType.HASTE);
     }
 
     private void startEffectChecker(Player player) {
@@ -90,7 +90,7 @@ public class TortoiseModifier extends AbstractModifier implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
         if (isActive(player)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 40, miningHasteLevel - 1, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 40, miningHasteLevel - 1, false, false));
         }
     }
 
@@ -131,7 +131,7 @@ public class TortoiseModifier extends AbstractModifier implements Listener {
     }
 
     private void immobilizePlayer(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, immobilizationDuration * 20, 6, false, false)); // Slowness level 7 (index 6) makes the player immobile
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, immobilizationDuration * 20, 6, false, false)); // Slowness level 7 (index 6) makes the player immobile
         ConsoleUtil.sendDebug("Immobilized " + player.getName() + " for " + immobilizationDuration + " seconds due to damage");
     }
 

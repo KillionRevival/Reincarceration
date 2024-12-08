@@ -506,7 +506,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                             for (int z = -radius; z <= radius; z++) {
                                 Block block = playerLoc.getBlock().getRelative(x, y, z);
                                 if (block.getType().isSolid()) {
-                                    player.getWorld().spawnParticle(Particle.SLIME, block.getLocation().add(0.5, 1, 0.5), 1);
+                                    player.getWorld().spawnParticle(Particle.ITEM_SLIME, block.getLocation().add(0.5, 1, 0.5), 1);
                                 }
                             }
                         }
@@ -515,7 +515,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                 }
             }.runTaskTimer(Reincarceration.getPlugin(Reincarceration.class), 0L, 1L);
 
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, duration, 3));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, duration, 3));
         }
     }
 
@@ -564,7 +564,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                 @Override
                 public void run() {
                     if (ticks >= duration) {
-                        player.removePotionEffect(PotionEffectType.SLOW);
+                        player.removePotionEffect(PotionEffectType.SLOWNESS);
                         this.cancel();
                         return;
                     }
@@ -572,7 +572,7 @@ public class OreSicknessModifier extends AbstractModifier implements Listener {
                             .filter(item -> item != null && item.getType() != Material.AIR)
                             .count();
                     int slowness = filledSlots / 9;  // 1 level of slowness for every 9 filled slots
-                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 40, slowness, true));
+                    player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 40, slowness, true));
                     ticks += 20;
                 }
             }.runTaskTimer(Reincarceration.getPlugin(Reincarceration.class), 0L, 20L);

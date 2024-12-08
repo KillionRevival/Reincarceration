@@ -113,7 +113,7 @@ public class GamblerModifier extends AbstractModifier implements Listener {
             event.setCancelled(true);
             player.sendMessage(ChatColor.GREEN + "You narrowly avoided the damage!");
         } else if (effect < 0.7) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 2));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 2));
             player.sendMessage(ChatColor.GRAY + "The hit slowed you down!");
         }
 
@@ -152,15 +152,15 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     private void enhanceMob(Mob mob) {
         // Increase health
-        double baseHealth = Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getBaseValue();
-        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH)).setBaseValue(baseHealth * 1.5);
-        mob.setHealth(Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MAX_HEALTH)).getValue());
+        double baseHealth = Objects.requireNonNull(mob.getAttribute(Attribute.MAX_HEALTH)).getBaseValue();
+        Objects.requireNonNull(mob.getAttribute(Attribute.MAX_HEALTH)).setBaseValue(baseHealth * 1.5);
+        mob.setHealth(Objects.requireNonNull(mob.getAttribute(Attribute.MAX_HEALTH)).getValue());
 
         // Increase speed and damage
-        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).setBaseValue(
-                Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)).getBaseValue() * 1.3);
-        Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)).setBaseValue(
-                Objects.requireNonNull(mob.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE)).getBaseValue() * 1.5);
+        Objects.requireNonNull(mob.getAttribute(Attribute.MOVEMENT_SPEED)).setBaseValue(
+                Objects.requireNonNull(mob.getAttribute(Attribute.MOVEMENT_SPEED)).getBaseValue() * 1.3);
+        Objects.requireNonNull(mob.getAttribute(Attribute.ATTACK_DAMAGE)).setBaseValue(
+                Objects.requireNonNull(mob.getAttribute(Attribute.ATTACK_DAMAGE)).getBaseValue() * 1.5);
 
         // Apply random potion effects
         applyRandomPotionEffects(mob);
@@ -168,7 +168,7 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     private void applyRandomPotionEffects(LivingEntity entity) {
         PotionEffectType[] effects = {
-                PotionEffectType.SPEED, PotionEffectType.INCREASE_DAMAGE, PotionEffectType.DAMAGE_RESISTANCE,
+                PotionEffectType.SPEED, PotionEffectType.STRENGTH, PotionEffectType.RESISTANCE,
                 PotionEffectType.REGENERATION, PotionEffectType.FIRE_RESISTANCE, PotionEffectType.INVISIBILITY
         };
 
@@ -183,8 +183,8 @@ public class GamblerModifier extends AbstractModifier implements Listener {
 
     private void applyRandomNegativeEffect(Player player) {
         PotionEffectType[] negativeEffects = {
-                PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.SLOW,
-                PotionEffectType.CONFUSION, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER
+                PotionEffectType.POISON, PotionEffectType.WEAKNESS, PotionEffectType.SLOWNESS,
+                PotionEffectType.NAUSEA, PotionEffectType.BLINDNESS, PotionEffectType.HUNGER
         };
 
         PotionEffectType effect = negativeEffects[random.nextInt(negativeEffects.length)];

@@ -124,7 +124,7 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
             Player player = (Player) event.getEntity();
             ConsoleUtil.sendDebug("ImmolationModifier Active on onEntityCombust " + player.getName() + "? " + isActive(player));
             if (isActive(player)) {
-                event.setDuration(fireDuration);
+                event.setDuration((long)fireDuration);
                 ConsoleUtil.sendDebug("EntityCombustEvent: Set fire duration for " + player.getName() + " to " + fireDuration);
             }
         }
@@ -155,7 +155,7 @@ public class ImmolationModifier extends AbstractModifier implements Listener {
         ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
         ItemMeta meta = boots.getItemMeta();
         if (meta != null) {
-            meta.addEnchant(Enchantment.PROTECTION_FIRE, fireProtectionLevel, true);
+            meta.addEnchant(Enchantment.FIRE_PROTECTION, fireProtectionLevel, true);
 
             // Set custom durability
             if (meta instanceof Damageable) {

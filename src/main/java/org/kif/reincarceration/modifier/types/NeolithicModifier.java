@@ -67,11 +67,11 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         if (task != null) {
             task.cancel();
         }
-        player.removePotionEffect(PotionEffectType.FAST_DIGGING);
+        player.removePotionEffect(PotionEffectType.HASTE);
     }
 
     private void applyHasteEffect(Player player) {
-        player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 20 * 40, 0, false, false));
+        player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 20 * 40, 0, false, false));
     }
 
     @Override

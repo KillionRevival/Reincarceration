@@ -1,5 +1,7 @@
 package org.kif.reincarceration.util;
 
+import co.killionrevival.killioncommons.util.TextFormatUtil;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -20,25 +22,25 @@ public class ConsoleUtil {
 
     public static void sendFormatMessage(String message) {
         String prefix = configManager.getPrefix();
-        console.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + message));
+        console.sendMessage(TextFormatUtil.getComponentFromLegacyString(prefix + message));
     }
 
     public static void sendInfo(String message) {
-        sendFormatMessage("&b" + message);
+        sendFormatMessage("&b " + message);
     }
 
     public static void sendError(String message) {
-        sendFormatMessage("&c" + message);
+        sendFormatMessage("&c " + message);
     }
 
     public static void sendSuccess(String message) {
-        sendFormatMessage("§2" + message);
+        sendFormatMessage("&2 " + message);
     }
 
     public static void sendDebug(String message) {
         boolean debugMode = configManager.isDebugMode();
         if (debugMode) {
-            sendFormatMessage("&d" + message);
+            sendFormatMessage("&d " + message);
         }
     }
 }
