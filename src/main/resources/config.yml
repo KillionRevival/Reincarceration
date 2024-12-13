@@ -433,9 +433,9 @@ modifiers:
     mining_haste_level: 1       # Level of the mining haste effect (1 for Haste I, 2 for Haste II, etc.)
     immobilization_duration: 5  # Duration in seconds that the player is immobilized after taking damage
     rewards:
-      commands_desc:
-        - "Coming Soon: Firework Rocket Of Infinity"
       items:
+        CURIOSITIES_POCKET_ROCKET:
+          amount: 1
         ELYTRA:
           name: "&6The Rabbit's Wings"
           enchantments:
