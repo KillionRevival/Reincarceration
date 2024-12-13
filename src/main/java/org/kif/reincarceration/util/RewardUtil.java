@@ -1,5 +1,8 @@
 package org.kif.reincarceration.util;
 
+import co.killionrevival.curiosities.Curiosities;
+import co.killionrevival.curiosities.items.CuriousItem;
+import co.killionrevival.curiosities.items.CuriousItemFactory;
 import co.killionrevival.killioncommons.util.DateUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -28,6 +31,8 @@ import java.util.List;
 import java.util.Set;
 
 public class RewardUtil {
+    public static final String CURIOSITIES_PREFIX = "CURIOSITIES_";
+
     public static CycleReward getCycleRewardForModifier(
             IModifier modifier,
             Reincarceration plugin
@@ -64,6 +69,14 @@ public class RewardUtil {
             CycleItem.CycleItemBuilder builder = CycleItem.builder();
             // getInt defaults to 0 if not found, we want default to 1
             final int amount = items.getInt(materialName + ".amount") == 0 ? 1 : items.getInt(materialName + ".amount");
+
+            if (materialName.startsWith(CURIOSITIES_PREFIX)) {
+                for (int i = 0; i < amount; i++) {
+                    cycleItems.add(builder.material(materialName).build());
+                }
+                continue;
+            }
+
             final String itemName = items.getString(materialName + ".name");
 
             builder.material(materialName)
@@ -105,9 +118,23 @@ public class RewardUtil {
             final CycleItem item
     ) {
         final String materialName = item.getMaterial();
+        if (materialName == null) {
+            ConsoleUtil.sendError("CycleItem reward has null name. Returning null itemstack.");
+            return null;
+        }
+        if (materialName.startsWith(CURIOSITIES_PREFIX)) {
+            final String curiositiesName = materialName.substring(CURIOSITIES_PREFIX.length());
+            final CuriousItem customItem = CuriousItemFactory.createDefault(new NamespacedKey(Curiosities.getNamespace(), curiositiesName.toLowerCase()));
+            if (customItem == null) {
+                ConsoleUtil.sendError("CycleItem reward: " + item.getMaterial() + " has incorrect custom item name. Returning null itemstack.");
+                return null;
+            }
+            return customItem.getItemStack();
+        }
+
         final Material material = Material.getMaterial(materialName);
         if (material == null) {
-            ConsoleUtil.sendError("CycleItem reward: " + item.getMaterial() + " has incorrect name. Returning null itemstack.");
+            ConsoleUtil.sendError("CycleItem reward: " + item.getMaterial() + " has incorrect material name. Returning null itemstack.");
             return null;
         }
 

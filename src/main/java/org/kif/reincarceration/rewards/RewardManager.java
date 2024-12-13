@@ -60,7 +60,7 @@ public class RewardManager {
             for (final String command : reward.getCommands()) {
                 plugin.getServer().dispatchCommand(
                         plugin.getServer().getConsoleSender(),
-                        command
+                        command.replace("<player>", player.getName())
                 );
             }
             CycleHistory history;
