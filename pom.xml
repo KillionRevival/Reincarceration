@@ -83,17 +83,32 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>github</id>
+            <id>github_tags</id>
             <url>https://maven.pkg.github.com/KillionRevival/CustomTags</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>github_commons</id>
+            <url>https://maven.pkg.github.com/KillionRevival/KillionCommons</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>github_curiosities</id>
+            <url>https://maven.pkg.github.com/KillionRevival/KillionCuriosities</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>co.killionrevival</groupId>
+            <groupId>co.killionrevival.Curiosities</groupId>
             <artifactId>curiosities</artifactId>
             <version>1.0.0</version>
             <scope>provided</scope>
