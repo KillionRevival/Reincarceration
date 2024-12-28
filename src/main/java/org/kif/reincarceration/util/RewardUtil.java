@@ -23,7 +23,10 @@ import org.kif.reincarceration.rewards.CycleReward;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -167,8 +170,8 @@ public class RewardUtil {
 
     public static ItemStack getPaintingRewardItem(
             final IModifier modifierCompleted,
-            final LocalDateTime beginDate,
-            final LocalDateTime endDate
+            final Instant beginDate,
+            final Instant endDate
     ) {
         final ItemStack painting = new ItemStack(Material.PAINTING, 1);
         final ItemMeta meta = painting.getItemMeta();

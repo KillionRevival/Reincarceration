@@ -170,7 +170,7 @@
         <dependency>
             <groupId>co.killionrevival</groupId>
             <artifactId>killioncommons</artifactId>
-            <version>3.1-SNAPSHOT</version>
+            <version>3.3.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

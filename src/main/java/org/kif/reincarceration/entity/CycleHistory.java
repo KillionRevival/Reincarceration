@@ -3,6 +3,7 @@ package org.kif.reincarceration.entity;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class CycleHistory {
     private final Integer id;
     private final UUID playerId;
     private final String modifierId;
-    private final LocalDateTime startTime;
-    private final LocalDateTime endTime;
+    private final Instant startTime;
+    private final Instant endTime;
     private final boolean completed;
 }

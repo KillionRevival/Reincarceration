@@ -369,8 +369,8 @@ public class DataManager {
                                .id(resultSet.getInt("id"))
                                .playerId(UUID.fromString(resultSet.getString("player_uuid")))
                                .modifierId(resultSet.getString("modifier_id"))
-                               .startTime(resultSet.getTimestamp("start_time").toLocalDateTime())
-                               .endTime(resultSet.getTimestamp("end_time").toLocalDateTime())
+                               .startTime(resultSet.getTimestamp("start_time").toInstant())
+                               .endTime(resultSet.getTimestamp("end_time").toInstant())
                                .completed(resultSet.getBoolean("completed"))
                                .build();
         } catch (SQLException e) {
@@ -393,8 +393,8 @@ public class DataManager {
                                     .id(resultSet.getInt("id"))
                                     .playerId(UUID.fromString(resultSet.getString("player_uuid")))
                                     .modifierId(resultSet.getString("modifier_id"))
-                                    .startTime(resultSet.getTimestamp("start_time").toLocalDateTime())
-                                    .endTime(resultSet.getTimestamp("end_time").toLocalDateTime())
+                                    .startTime(resultSet.getTimestamp("start_time").toInstant())
+                                    .endTime(resultSet.getTimestamp("end_time").toInstant())
                                     .completed(resultSet.getBoolean("completed"))
                                     .build()
                 );
