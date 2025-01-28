@@ -1,0 +1,36 @@
+name: Build and Upload Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+
+      - name: Build with Gradle
+        uses: KillionRevival/gradle-builder-action@v3
+        id: build-step
+        with:
+          token: ${{ secrets.PAT }}
+
+      - name: Upload Release Asset
+        id: release
+        uses: KillionRevival/release-action@v2
+        with:
+          jar-path: ${{ steps.build-step.outputs.jar-path }}
+
+      - name: Deploy to package repo
+        id: deploy
+        uses: KillionRevival/gradle-deploy-action@v1
+        with:
+          java-version: 21
+        
