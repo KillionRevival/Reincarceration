@@ -127,12 +127,12 @@ public class RewardUtil {
         }
         if (materialName.startsWith(CURIOSITIES_PREFIX)) {
             final String curiositiesName = materialName.substring(CURIOSITIES_PREFIX.length());
-            final CuriousItem customItem = CuriousItemFactory.createDefault(new NamespacedKey(Curiosities.getNamespace(), curiositiesName.toLowerCase()));
+            final CuriousItem customItem = CuriousItemFactory.createDefault(new NamespacedKey(Curiosities.getNamespace(), curiositiesName.toLowerCase()), null);
             if (customItem == null) {
                 ConsoleUtil.sendError("CycleItem reward: " + item.getMaterial() + " has incorrect custom item name. Returning null itemstack.");
                 return null;
             }
-            return customItem.getItemStack();
+            return customItem.getBackingItemStack();
         }
 
         final Material material = Material.getMaterial(materialName);
