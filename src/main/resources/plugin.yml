@@ -7,7 +7,7 @@ depend:
     Vault,
     LuckPerms,
     PlayerVaults,
-    EconomyShopGUI,
+    EconomyShopGUI-Premium,
     WorldGuard,
     ChestShop,
     KillionCommons,
