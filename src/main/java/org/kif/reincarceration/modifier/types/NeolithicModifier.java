@@ -1,5 +1,6 @@
 package org.kif.reincarceration.modifier.types;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -122,13 +123,17 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         }
 
         // If not a special case, handle normal drops
-        List<ItemStack> drops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
-        for (ItemStack drop : drops) {
-            ItemUtil.addReincarcerationFlag(drop);
-            block.getWorld().dropItemNaturally(block.getLocation(), drop);
-            ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
-        }
+        final List<ItemStack> drops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
+        final org.bukkit.Location location = block.getLocation();
 
+        // Schedule drops for next tick
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            for (ItemStack drop : drops) {
+                ItemUtil.addReincarcerationFlag(drop);
+                block.getWorld().dropItemNaturally(location, drop);
+                ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
+            }
+        }, 1L);
         // Handle container contents if necessary
         handleContainerContents(block);
     }

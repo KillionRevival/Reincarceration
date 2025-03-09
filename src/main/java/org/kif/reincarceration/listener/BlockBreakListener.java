@@ -8,6 +8,7 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -112,20 +113,22 @@ public class BlockBreakListener implements Listener {
 
     private void handleSnowBlockBreak(BlockBreakEvent event) {
         event.setCancelled(true);  // Cancel the original event
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
+        final Block block = event.getBlock();
+        final Player player = event.getPlayer();
+        final Location location = block.getLocation();
 
         // Create a flagged snow block item
-        ItemStack snowBlock = new ItemStack(Material.SNOW_BLOCK);
+        final ItemStack snowBlock = new ItemStack(Material.SNOW_BLOCK);
         ItemUtil.addReincarcerationFlag(snowBlock);
-
-        // Drop the flagged snow block
-        block.getWorld().dropItemNaturally(block.getLocation(), snowBlock);
 
         // Set the block to air (break it)
         block.setType(Material.AIR);
 
-        ConsoleUtil.sendDebug("Dropped flagged snow block for player: " + player.getName());
+        // Drop the flagged snow block with delay
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            block.getWorld().dropItemNaturally(location, snowBlock);
+            ConsoleUtil.sendDebug("Dropped flagged snow block for player: " + player.getName());
+        }, 1L);
     }
 
     private boolean canBreakBlock(Player player, Block block) {
@@ -147,8 +150,11 @@ public class BlockBreakListener implements Listener {
     }
 
     private void handleDefaultBreak(BlockBreakEvent event) {
-        Block block = event.getBlock();
-        Player player = event.getPlayer();
+        final Block block = event.getBlock();
+        final Player player = event.getPlayer();
+        final Material blockType = block.getType();
+        final Location dropLocation = block.getLocation().add(0.5, 0.5, 0.5);
+        final ItemStack tool = player.getInventory().getItemInMainHand();
 
         // Cancel normal drops
         event.setDropItems(false);
@@ -158,15 +164,20 @@ public class BlockBreakListener implements Listener {
             return; // If it was a special case, we're done
         }
 
-        // If not a special case, handle normal drops
-        List<ItemStack> drops = new ArrayList<>(block.getDrops(player.getInventory().getItemInMainHand()));
-        for (ItemStack drop : drops) {
-            ItemUtil.addReincarcerationFlag(drop);
-            block.getWorld().dropItemNaturally(block.getLocation(), drop);
-            ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
-        }
+        // If not a special case, schedule drops for next tick
+        final List<ItemStack> drops = new ArrayList<>(block.getDrops(tool));
 
-        // Handle container contents if necessary
+        // Schedule the drop for 1 tick later, after the block is broken
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            for (ItemStack drop : drops) {
+                ItemUtil.addReincarcerationFlag(drop);
+
+                block.getWorld().dropItemNaturally(block.getLocation(), drop);
+
+                ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
+            }
+        }, 1L); // 1 tick delay
+        // Handle container contents
         handleContainerContents(block);
     }
 
