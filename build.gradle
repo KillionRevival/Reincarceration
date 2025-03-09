@@ -7,12 +7,12 @@ plugins {
 }
 
 group = 'org.kif'
-version = '1.2.3'
+version = '1.2.5'
 
 def javaVersion = JavaVersion.VERSION_21
 def encoding = 'UTF-8'
-def paperVersion = '1.21.4-R0.1-SNAPSHOT'
-def mcVersion = '1.21.4'
+def paperVersion = '1.21.3-R0.1-SNAPSHOT'
+def mcVersion = '1.21.3'
 
 idea {
     module {
@@ -54,7 +54,7 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
-    implementation "co.killionrevival:killioncommons:3.3.1-SNAPSHOT"
+    implementation "co.killionrevival:killioncommons:3.3.2-SNAPSHOT"
     implementation "co.killionrevival:curiosities:1.1.1"
     implementation "com.flyerzrule.mc.customtags:customtags:1.4.2"
     implementation "net.luckperms:api:5.4"
