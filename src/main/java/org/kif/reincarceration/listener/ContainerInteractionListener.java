@@ -39,92 +39,121 @@ public class ContainerInteractionListener implements Listener {
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) {
-        if (!(event.getPlayer() instanceof Player)) {
-            return;
-        }
-
-        Player player = (Player) event.getPlayer();
-        if (player.isOp()) return;
-
-        boolean isAssociated = permissionManager.isAssociatedWithBaseGroup(player.getUniqueId());
-
-        Inventory inventory = event.getInventory();
-
-        // Ignore player inventory, crafting tables, and certain other inventory types
-        if (shouldIgnoreInventory(inventory)) {
-            return;
-        }
-
-        if (isAssociated) {
-            if (isBlacklistedInventory(inventory)) {
-                event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cThis container has been blacklisted from you.");
-                ConsoleUtil.sendDebug("Blocked blacklisted inventory open for " + player.getName() + ": " + inventory.getType());
+        try {
+            if (!(event.getPlayer() instanceof Player)) {
                 return;
             }
 
-            if (isAllowedContainer(inventory)) {
+            Player player = (Player) event.getPlayer();
+            if (player.isOp()) return;
+
+            boolean isAssociated = permissionManager.isAssociatedWithBaseGroup(player.getUniqueId());
+            Inventory inventory = event.getInventory();
+
+            // Skip furnace inventories - they're handled by CustomSmeltingManager now
+            if (isFurnaceInventory(inventory.getType())) {
+                ConsoleUtil.sendDebug("ContainerInteractionListener: Skipping furnace inventory for " + player.getName());
                 return;
             }
 
-            // Check player's inventory for unflagged items
-            if (playerHasUnflaggedItems(player)) {
-                event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cYou have prohibitted items on your person. Please remove them before accessing this container.");
-                ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": player has unflagged items");
+            // Ignore player inventory, crafting tables, and certain other inventory types
+            if (shouldIgnoreInventory(inventory)) {
                 return;
             }
 
-            if (containsUnflaggedItem(inventory)) {
-                event.setCancelled(true);
-                MessageUtil.sendPrefixMessage(player, "&cThis container has prohibited contents.");
-                ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": contains unflagged items");
-                return;
-            }
-
-            // Start a repeating task to check for unflagged items
-            BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-                if (player.getOpenInventory().getTopInventory().equals(inventory)) {
-                    if (containsUnflaggedItem(inventory) || playerHasUnflaggedItems(player)) {
-                        player.closeInventory();
-                        MessageUtil.sendPrefixMessage(player, "&cThis container has been closed due to prohibitted items detection.");
-                        ConsoleUtil.sendDebug("Closed inventory for " + player.getName() + ": unflagged items detected");
-                    }
-                } else {
-                    // If the player is no longer viewing this inventory, cancel the task
-                    checkTasks.remove(player).cancel();
+            if (isAssociated) {
+                if (isBlacklistedInventory(inventory)) {
+                    event.setCancelled(true);
+                    MessageUtil.sendPrefixMessage(player, "&cThis container has been blacklisted from you.");
+                    ConsoleUtil.sendDebug("Blocked blacklisted inventory open for " + player.getName() + ": " + inventory.getType());
+                    return;
                 }
-            }, CHECK_INTERVAL, CHECK_INTERVAL);
 
-            checkTasks.put(player, task);
-        } else {
-            removeFlagsFromInventory(inventory);
-            ConsoleUtil.sendDebug("Removed flags from inventory for non-associated player: " + player.getName());
+                if (isAllowedContainer(inventory)) {
+                    return;
+                }
+
+                // Check player's inventory for unflagged items
+                if (playerHasUnflaggedItems(player)) {
+                    event.setCancelled(true);
+                    MessageUtil.sendPrefixMessage(player, "&cYou have prohibitted items on your person. Please remove them before accessing this container.");
+                    ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": player has unflagged items");
+                    return;
+                }
+
+                // Check if the container has unflagged items
+                if (containsUnflaggedItem(inventory)) {
+                    event.setCancelled(true);
+                    MessageUtil.sendPrefixMessage(player, "&cThis container has prohibited contents.");
+                    ConsoleUtil.sendDebug("Blocked inventory open for " + player.getName() + ": container has unflagged items");
+                    return;
+                }
+
+                // Start a repeating task to check for unflagged items
+                BukkitTask task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                    if (player.getOpenInventory().getTopInventory().equals(inventory)) {
+                        if (playerHasUnflaggedItems(player) || containsUnflaggedItem(inventory)) {
+                            player.closeInventory();
+                            MessageUtil.sendPrefixMessage(player, "&cThis container has been closed due to prohibitted items detection.");
+                            ConsoleUtil.sendDebug("Closed inventory for " + player.getName() + ": unflagged items detected");
+                        }
+                    } else {
+                        // If the player is no longer viewing this inventory, cancel the task
+                        BukkitTask existingTask = checkTasks.remove(player);
+                        if (existingTask != null) {
+                            existingTask.cancel();
+                        }
+                    }
+                }, CHECK_INTERVAL, CHECK_INTERVAL);
+
+                checkTasks.put(player, task);
+            } else {
+                removeFlagsFromInventory(inventory);
+                ConsoleUtil.sendDebug("Removed flags from inventory for non-associated player: " + player.getName());
+            }
+
+            // Add player to container viewers
+            ContainerViewerTracker.addViewer(inventory, player);
+            logContainerViewers(inventory);
+        } catch (Exception e) {
+            ConsoleUtil.sendError("Error in ContainerInteractionListener.onInventoryOpen: " + e.getMessage());
+            e.printStackTrace();
         }
-
-        // Add player to container viewers
-        ContainerViewerTracker.addViewer(inventory, player);
-        logContainerViewers(inventory);
     }
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (!(event.getPlayer() instanceof Player)) {
-            return;
+        try {
+            if (!(event.getPlayer() instanceof Player)) {
+                return;
+            }
+
+            Player player = (Player) event.getPlayer();
+            Inventory inventory = event.getInventory();
+
+            // Remove player from container viewers
+            ContainerViewerTracker.removeViewer(inventory, player);
+            logContainerViewers(inventory);
+
+            // Cancel the check task if it exists
+            BukkitTask task = checkTasks.remove(player);
+            if (task != null) {
+                task.cancel();
+            }
+        } catch (Exception e) {
+            ConsoleUtil.sendError("Error in ContainerInteractionListener.onInventoryClose: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
 
-        Player player = (Player) event.getPlayer();
-        Inventory inventory = event.getInventory();
-
-        // Remove player from container viewers
-        ContainerViewerTracker.removeViewer(inventory, player);
-        logContainerViewers(inventory);
-
-        // Cancel the check task if it exists
-        BukkitTask task = checkTasks.remove(player);
-        if (task != null) {
-            task.cancel();
-        }
+    /**
+     * Determines if the inventory type is a furnace-type (furnace, blast furnace, smoker)
+     * which should be handled by CustomSmeltingManager instead of this listener.
+     */
+    private boolean isFurnaceInventory(InventoryType type) {
+        return type == InventoryType.FURNACE ||
+                type == InventoryType.BLAST_FURNACE ||
+                type == InventoryType.SMOKER;
     }
 
     private boolean isBlacklistedInventory(Inventory inventory) {
@@ -132,17 +161,15 @@ public class ContainerInteractionListener implements Listener {
     }
 
     private boolean isAllowedContainer(Inventory inventory) {
-        // Check if the inventory holder is from EconomyShopGUI
-        // This method might need to be adjusted based on how EconomyShopGUI implements its inventories
         if (inventory.getHolder() == null) {
             return false;
         }
-        ConsoleUtil.sendDebug("Inventory Name: " + inventory.getHolder().getClass().getName());
-        ConsoleUtil.sendDebug("Simple Name: " + inventory.getHolder().getClass().getSimpleName());
-        String title = inventory.getHolder().getClass().getName();
+
+        String className = inventory.getHolder().getClass().getName();
+        ConsoleUtil.sendDebug("Checking container class: " + className);
 
         for (String pattern : allowedContainerTitlePatterns) {
-            if (title.contains(pattern)) {
+            if (className.contains(pattern)) {
                 return true;
             }
         }
