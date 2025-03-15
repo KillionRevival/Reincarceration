@@ -3,6 +3,7 @@ package org.kif.reincarceration.util;
 import co.killionrevival.curiosities.Curiosities;
 import co.killionrevival.curiosities.items.CuriousItem;
 import co.killionrevival.curiosities.items.CuriousItemFactory;
+import co.killionrevival.curiosities.util.ItemStackUtil;
 import co.killionrevival.killioncommons.util.DateUtil;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -72,10 +73,11 @@ public class RewardUtil {
             CycleItem.CycleItemBuilder builder = CycleItem.builder();
             // getInt defaults to 0 if not found, we want default to 1
             final int amount = items.getInt(materialName + ".amount") == 0 ? 1 : items.getInt(materialName + ".amount");
+            final boolean stamped = items.getBoolean(materialName + ".stamped");
 
             if (materialName.startsWith(CURIOSITIES_PREFIX)) {
                 for (int i = 0; i < amount; i++) {
-                    cycleItems.add(builder.material(materialName).build());
+                    cycleItems.add(builder.material(materialName).stamped(stamped).build());
                 }
                 continue;
             }
@@ -85,6 +87,7 @@ public class RewardUtil {
             builder.material(materialName)
                    .name(itemName)
                    .amount(amount)
+                   .stamped(stamped)
                    .lore(items.getStringList(materialName + ".lore"));
 
             final ConfigurationSection enchantmentsPath = items.getConfigurationSection(materialName + ".enchantments");
@@ -164,6 +167,10 @@ public class RewardUtil {
             }
             itemStack.addUnsafeEnchantment(enchantment, value);
         });
+
+        if (item.isStamped()) {
+            ItemStackUtil.stampItemStack(itemStack, null);
+        }
 
         return itemStack;
     }

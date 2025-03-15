@@ -14,4 +14,5 @@ public class CycleItem {
     final Map<String, Integer> enchantments;
     final List<String> lore;
     final Integer amount;
+    final boolean stamped;
 }

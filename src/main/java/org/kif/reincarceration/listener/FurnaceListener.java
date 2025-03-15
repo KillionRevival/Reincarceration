@@ -1,7 +1,10 @@
 package org.kif.reincarceration.listener;
 
+import org.bukkit.block.BlastFurnace;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.Smoker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -223,10 +226,14 @@ public class FurnaceListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFurnaceSmelt(FurnaceSmeltEvent event) {
+        final BlockState state = event.getBlock().getState();
+        if (!(state instanceof Furnace furnace)) {
+            return;
+        }
+
         // Schedule a task to check and potentially mark the furnace after smelting
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             Block block = event.getBlock();
-            Furnace furnace = (Furnace) block.getState();
             FurnaceInventory inventory = furnace.getInventory();
 
             ItemStack inputItem = inventory.getSmelting();
@@ -249,10 +256,13 @@ public class FurnaceListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFurnaceBurn(FurnaceBurnEvent event) {
+        final BlockState state = event.getBlock().getState();
+        if (!(state instanceof Furnace furnace)) {
+            return;
+        }
         // Similarly, check and potentially mark the furnace after burning
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             Block block = event.getBlock();
-            Furnace furnace = (Furnace) block.getState();
             FurnaceInventory inventory = furnace.getInventory();
 
             ItemStack inputItem = inventory.getSmelting();
