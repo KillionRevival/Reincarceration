@@ -58,7 +58,7 @@ public class SimpleRegionsListener implements Listener {
         try {
             balance = dataManager.getStoredBalance(event.getPlayer().getUniqueId());
             final BigDecimal newBalance = balance.subtract(cost);
-            ConsoleUtil.sendDebug("Old Balance: " + balance + ", New balance: " + balance);
+            ConsoleUtil.sendDebug("Old Balance: " + balance + ", New balance: " + newBalance);
             dataManager.setStoredBalance(event.getPlayer().getUniqueId(), newBalance);
             event.setEconomyInteractHandled(true);
         }  catch (SQLException e) {
