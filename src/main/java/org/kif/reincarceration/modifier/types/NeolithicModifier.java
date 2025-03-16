@@ -130,10 +130,10 @@ public class NeolithicModifier extends AbstractModifier implements Listener {
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             for (ItemStack drop : drops) {
                 ItemUtil.addReincarcerationFlag(drop);
-                block.getWorld().dropItemNaturally(location, drop);
+                block.getWorld().dropItem(location.add(0.5, 0.5, 0.5), drop);
                 ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
             }
-        }, 1L);
+        }, 3L);
         // Handle container contents if necessary
         handleContainerContents(block);
     }

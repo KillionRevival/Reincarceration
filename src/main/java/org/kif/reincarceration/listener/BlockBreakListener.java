@@ -126,9 +126,9 @@ public class BlockBreakListener implements Listener {
 
         // Drop the flagged snow block with delay
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            block.getWorld().dropItemNaturally(location, snowBlock);
+            block.getWorld().dropItem(location.add(0.5, 0.5, 0.5), snowBlock);
             ConsoleUtil.sendDebug("Dropped flagged snow block for player: " + player.getName());
-        }, 1L);
+        }, 3L);
     }
 
     private boolean canBreakBlock(Player player, Block block) {
@@ -172,11 +172,11 @@ public class BlockBreakListener implements Listener {
             for (ItemStack drop : drops) {
                 ItemUtil.addReincarcerationFlag(drop);
 
-                block.getWorld().dropItemNaturally(block.getLocation(), drop);
+                block.getWorld().dropItem(block.getLocation().add(0.5, 0.5, 0.5), drop);
 
                 ConsoleUtil.sendDebug("Dropped flagged block item: " + drop.getType().name());
             }
-        }, 1L); // 1 tick delay
+        }, 3L); // 1 tick delay
         // Handle container contents
         handleContainerContents(block);
     }
