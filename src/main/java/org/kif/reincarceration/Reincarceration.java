@@ -1,6 +1,7 @@
 package org.kif.reincarceration;
 
 import co.killionrevival.killioncommons.util.TextFormatUtil;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
@@ -114,6 +115,7 @@ public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
                 getServer().getPluginManager().registerEvents(new EnderChestBlocker(this), this);
 
                 getServer().getPluginManager().registerEvents(new PayCommandListener(this), this);
+                getServer().getPluginManager().registerEvents(new MoneySendCommandListener(this), this);
 
                 getServer().getPluginManager().registerEvents(new ChestShopListener(this), this);
 
@@ -152,11 +154,6 @@ public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
         } else {
             console.sendMessage(ChatColor.RED + "[Reincarceration] has been disabled!");
         }
-        // getLogger().info("Reincarceration has been disabled!");
-    }
-
-    public ModuleManager getModuleManager() {
-        return moduleManager;
     }
 
     // API Methods
