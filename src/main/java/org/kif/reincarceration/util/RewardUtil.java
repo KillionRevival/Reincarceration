@@ -135,6 +135,9 @@ public class RewardUtil {
                 ConsoleUtil.sendError("CycleItem reward: " + item.getMaterial() + " has incorrect custom item name. Returning null itemstack.");
                 return null;
             }
+            if (item.isStamped()) {
+                ItemStackUtil.stampItemStack(customItem.getBackingItemStack(), null);
+            }
             return customItem.getBackingItemStack();
         }
 
