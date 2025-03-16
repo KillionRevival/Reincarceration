@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+@Getter
 public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
     private ModuleManager moduleManager;
     private static final ConsoleCommandSender console = Bukkit.getConsoleSender();
@@ -110,6 +111,7 @@ public class Reincarceration extends JavaPlugin implements IReincarcerationAPI {
 
                 // Prevention: Accessing Containers with unflagged items
                 getServer().getPluginManager().registerEvents(new ContainerInteractionListener(this), this);
+                getServer().getPluginManager().registerEvents(new EnderChestBlocker(this), this);
 
                 getServer().getPluginManager().registerEvents(new PayCommandListener(this), this);
 
