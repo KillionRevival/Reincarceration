@@ -9,6 +9,9 @@ economy:
     - 35000
     - 65000
     - 100000
+  # CoinsEngine specific settings
+  coins-engine:
+    currency-id: "money"  # ID of the currency to use (change to match your server's configuration)
 
 start_location: # This was meant to just send them to the prison but suffocating them at the location also works
   world: "world"

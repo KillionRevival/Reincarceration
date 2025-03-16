@@ -1,29 +1,32 @@
 package org.kif.reincarceration.economy;
 
-import net.milkbowl.vault.economy.Economy;
-import org.bukkit.plugin.RegisteredServiceProvider;
+import su.nightexpress.coinsengine.api.CoinsEngineAPI;
+import su.nightexpress.coinsengine.api.currency.Currency;
 import org.kif.reincarceration.Reincarceration;
 import org.kif.reincarceration.core.Module;
 import org.kif.reincarceration.util.ConsoleUtil;
 
 public class EconomyModule implements Module {
     private final Reincarceration plugin;
-    private Economy economy;
+    private Currency defaultCurrency;
     private EconomyManager economyManager;
+    private String configuredCurrencyId;
 
     public EconomyModule(Reincarceration plugin) {
         this.plugin = plugin;
+        // Load currency ID from config
+        this.configuredCurrencyId = plugin.getConfig().getString("economy.coins-engine.currency-id", "money");
     }
 
     @Override
     public void onEnable() {
         if (!setupEconomy()) {
-            plugin.getLogger().severe("Disabled due to no Vault dependency found!");
+            plugin.getLogger().severe("Disabled due to no CoinsEngine dependency found!");
             plugin.getServer().getPluginManager().disablePlugin(plugin);
             return;
         }
         this.economyManager = new EconomyManager(this);
-        ConsoleUtil.sendSuccess("Economy Module enabled");
+        ConsoleUtil.sendSuccess("Economy Module enabled with currency: " + defaultCurrency.getId());
     }
 
     @Override
@@ -32,22 +35,38 @@ public class EconomyModule implements Module {
     }
 
     private boolean setupEconomy() {
-        if (plugin.getServer().getPluginManager().getPlugin("Vault") == null) {
+        if (plugin.getServer().getPluginManager().getPlugin("CoinsEngine") == null) {
             return false;
         }
-        RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
+
+        try {
+            // Get the configured currency
+            this.defaultCurrency = CoinsEngineAPI.getCurrency(configuredCurrencyId);
+            if (this.defaultCurrency == null) {
+                plugin.getLogger().severe("Could not find configured currency '" + configuredCurrencyId + "' in CoinsEngine!");
+                // Try to get any available currency as fallback
+                for (Currency currency : CoinsEngineAPI.getCurrencyManager().getCurrencies()) {
+                    this.defaultCurrency = currency;
+                    plugin.getLogger().warning("Using '" + currency.getId() + "' as fallback currency");
+                    break;
+                }
+                if (this.defaultCurrency == null) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to initialize CoinsEngine: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
-        economy = rsp.getProvider();
-        return true;
     }
 
-    public Economy getEconomy() {
-        if (economy == null) {
+    public Currency getDefaultCurrency() {
+        if (defaultCurrency == null) {
             setupEconomy();
         }
-        return economy;
+        return defaultCurrency;
     }
 
     public EconomyManager getEconomyManager() {
