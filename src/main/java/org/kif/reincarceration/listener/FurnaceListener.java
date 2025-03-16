@@ -115,19 +115,19 @@ public class FurnaceListener implements Listener {
                     return;
                 }
 
-                // Flag the output, if present
-                if (outputItem != null && !outputItem.getType().isAir() && !ItemUtil.hasReincarcerationFlag(outputItem)) {
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                        ItemStack flaggedOutput = outputItem.clone();
-                        ItemUtil.addReincarcerationFlag(flaggedOutput);
-                        furnaceInventory.setResult(flaggedOutput);
-                        ConsoleUtil.sendDebug("Flagged output item for reincarcerated player: " + outputItem.getType() + " x" + outputItem.getAmount());
-                    });
-                }
+                // // Flag the output, if present
+                // if (outputItem != null && !outputItem.getType().isAir() && !ItemUtil.hasReincarcerationFlag(outputItem)) {
+                //     plugin.getServer().getScheduler().runTask(plugin, () -> {
+                //         ItemStack flaggedOutput = outputItem.clone();
+                //         ItemUtil.addReincarcerationFlag(flaggedOutput);
+                //         furnaceInventory.setResult(flaggedOutput);
+                //         ConsoleUtil.sendDebug("Flagged output item for reincarcerated player: " + outputItem.getType() + " x" + outputItem.getAmount());
+                //     });
+                // }
 
-                // Remove furnace flag since we've handled the flagging
-                markFurnace(furnace.getBlock(), false);
-                ConsoleUtil.sendDebug("Removed flag from furnace after reincarcerated player accessed it");
+                // // Remove furnace flag since we've handled the flagging
+                // markFurnace(furnace.getBlock(), false);
+                // ConsoleUtil.sendDebug("Removed flag from furnace after reincarcerated player accessed it");
             }
         } else {
             // Player is normal, remove furnace flag and remove any flags from items
